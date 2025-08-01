@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { ChevronDown, ChevronRight } from '@lucide/svelte';
+	import { ChevronDown, ChevronRight, Target, Edit } from '@lucide/svelte';
 	import type { Milestone } from '$lib/models/types';
 	import { calculatePriority, getPriorityLabel } from '$lib/services/priority';
 	import { getMilestoneCompletionPercentage } from '$lib/services/percentage';
-	import { formatTargetDate } from '$lib/services/date';
 	import ProgressBar from './ProgressBar.svelte';
-	import TaskKanban from './TaskKanban.svelte';
+	import TaskList from './TaskList.svelte';
+	import TimeRemaining from './TimeRemaining.svelte';
+	import { modalStore } from '$lib/stores/modalStore';
 
 	let { milestone }: { milestone: Milestone } = $props();
 
@@ -18,51 +19,64 @@
 	function toggleExpanded() {
 		isExpanded = !isExpanded;
 	}
+
+	function openModal() {
+		modalStore.openMilestoneModal(milestone.id);
+	}
+
+	function openEditModal() {
+		modalStore.openMilestoneModal(milestone.id, 'edit');
+	}
 </script>
 
 <div class="milestone-card priority-{priority}">
-	<button class="milestone-header" onclick={toggleExpanded}>
-		<div class="milestone-info">
-			<div class="milestone-title-section">
-				{#if milestone.icon}
-					<span class="milestone-icon">{milestone.icon}</span>
+	<div class="milestone-header">
+		<button class="milestone-expand-button" onclick={toggleExpanded}>
+			<div class="milestone-info">
+				<div class="milestone-title-section">
+					{#if milestone.icon}
+						<span class="milestone-icon">{milestone.icon}</span>
+					{/if}
+					<div class="milestone-text">
+						<div class="milestone-meta">
+							<h3>{milestone.title}</h3>
+							<div class="priority-badge priority-{priority}">
+								{priorityLabel}
+							</div>
+							<TimeRemaining targetDate={milestone.targetDate} size="medium" />
+						</div>
+						<p class="milestone-description">{milestone.description}</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="expand-icon">
+				{#if isExpanded}
+					<ChevronDown size={20} />
+				{:else}
+					<ChevronRight size={20} />
 				{/if}
-				<div class="milestone-text">
-					<h3>{milestone.title}</h3>
-					<p class="milestone-description">{milestone.description}</p>
-				</div>
 			</div>
+		</button>
 
-			<div class="milestone-meta">
-				<div class="priority-badge priority-{priority}">
-					{priorityLabel}
-				</div>
-				<div class="completion-indicator">
-					<span class="completion-text">{completionPercentage.toFixed(1)}% Complete</span>
-				</div>
-				<div class="target-date">
-					<span class="date-label">Target date:</span>
-					<span class="date-value">{formatTargetDate(milestone.targetDate)}</span>
-				</div>
-			</div>
+		<div class="milestone-actions">
+			<button class="action-button" onclick={openEditModal} title="Edit milestone">
+				<Edit size={16} />
+			</button>
+			<button class="smart-button" onclick={openModal} title="View SMART objectives">
+				<Target size={16} />
+				Details
+			</button>
 		</div>
-
-		<div class="expand-icon">
-			{#if isExpanded}
-				<ChevronDown size={20} />
-			{:else}
-				<ChevronRight size={20} />
-			{/if}
-		</div>
-	</button>
+	</div>
 
 	<div class="milestone-progress">
-		<ProgressBar percentage={completionPercentage} showLabel={false} />
+		<ProgressBar percentage={completionPercentage} />
 	</div>
 
 	{#if isExpanded}
 		<div class="milestone-content">
-			<TaskKanban tasks={milestone.tasks} />
+			<TaskList tasks={milestone.tasks} />
 		</div>
 	{/if}
 </div>
@@ -83,23 +97,30 @@
 	}
 
 	.milestone-header {
-		width: 100%;
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-md);
+		padding: var(--spacing-md);
+	}
+
+	.milestone-expand-button {
+		flex: 1;
 		background: none;
 		border: none;
-		padding: var(--spacing-lg);
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		gap: var(--spacing-md);
 		text-align: left;
 		transition: background-color var(--transition-fast);
+		padding: 0;
 	}
 
 	.milestone-info {
 		flex: 1;
 		display: flex;
 		flex-direction: column;
-		gap: var(--spacing-md);
+		gap: var(--spacing-sm);
 		min-width: 0;
 	}
 
@@ -110,7 +131,7 @@
 	}
 
 	.milestone-icon {
-		font-size: 1.5rem;
+		font-size: 1.25rem;
 		line-height: 1;
 		flex-shrink: 0;
 	}
@@ -123,15 +144,15 @@
 	.milestone-text h3 {
 		margin: 0 0 var(--spacing-xs) 0;
 		color: var(--color-text-primary);
-		font-size: 1.25rem;
+		font-size: 1.125rem;
 		word-wrap: break-word;
 	}
 
 	.milestone-description {
 		margin: 0;
 		color: var(--color-text-secondary);
-		font-size: 0.875rem;
-		line-height: 1.5;
+		font-size: 0.8rem;
+		line-height: 1.4;
 	}
 
 	.milestone-meta {
@@ -147,7 +168,6 @@
 		font-size: 0.75rem;
 		font-weight: 600;
 		text-transform: uppercase;
-		letter-spacing: 0.025em;
 	}
 
 	.priority-badge.priority-5 {
@@ -181,25 +201,55 @@
 		font-weight: 500;
 		color: var(--color-text-primary);
 	}
-
-	.target-date {
+	.milestone-actions {
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		gap: var(--spacing-xs);
+		gap: var(--spacing-sm);
 	}
 
-	.date-label {
+	.smart-button {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-xs);
+		padding: var(--spacing-xs) var(--spacing-sm);
+		background-color: var(--color-primary);
+		color: white;
+		border: none;
+		border-radius: var(--radius-sm);
 		font-size: 0.75rem;
-		color: var(--color-text-muted);
-		font-weight: 500;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all var(--transition-fast);
 		text-transform: uppercase;
 	}
 
-	.date-value {
-		font-size: 0.875rem;
+	.smart-button:hover {
+		background-color: var(--color-primary-hover);
+		transform: translateY(-1px);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.action-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		padding: var(--spacing-xs);
+		background-color: var(--color-background);
 		color: var(--color-text-secondary);
-		font-weight: 500;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		cursor: pointer;
+		transition: all var(--transition-fast);
+	}
+
+	.action-button:hover {
+		background-color: var(--color-surface);
+		border-color: var(--color-text-muted);
+		color: var(--color-text-primary);
+		transform: translateY(-1px);
+		box-shadow: var(--shadow-sm);
 	}
 
 	.expand-icon {
@@ -209,7 +259,7 @@
 	}
 
 	.milestone-progress {
-		padding: 0 var(--spacing-lg) var(--spacing-md) var(--spacing-lg);
+		padding: 0 var(--spacing-md) var(--spacing-sm) var(--spacing-md);
 		background-color: inherit;
 		transition: background-color var(--transition-fast);
 	}
@@ -221,13 +271,16 @@
 
 	.milestone-content {
 		border-top: 1px solid var(--color-border);
-		padding: var(--spacing-lg);
+		padding: var(--spacing-md);
 		background-color: var(--color-background);
 	}
 
 	@media (max-width: 768px) {
 		.milestone-header {
 			padding: var(--spacing-md);
+			flex-direction: column;
+			align-items: stretch;
+			gap: var(--spacing-sm);
 		}
 
 		.milestone-content {
@@ -242,6 +295,10 @@
 			flex-direction: column;
 			align-items: flex-start;
 			gap: var(--spacing-xs);
+		}
+
+		.milestone-actions {
+			align-self: flex-end;
 		}
 	}
 </style>

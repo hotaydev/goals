@@ -3,14 +3,17 @@
 	import { page } from '$app/state';
 	import { ArrowLeft, Edit, Trash2 } from '@lucide/svelte';
 	import type { Goal } from '$lib/models/types';
-	import { mockGoals } from '$lib/data/goals';
+	import { storageService } from '$lib/services/storage';
+	import { modalStore } from '$lib/stores/modalStore';
 	import GoalHeader from '$lib/components/GoalHeader.svelte';
 	import SMARTSection from '$lib/components/SMARTSection.svelte';
 	import MilestoneCard from '$lib/components/MilestoneCard.svelte';
+	import ModalManager from '$lib/components/ModalManager.svelte';
 	import { calculatePriority } from '$lib/services/priority';
 	import { getMilestoneCompletionPercentage } from '$lib/services/percentage';
 
 	let goal = $state<Goal | null>(null);
+	let goals = $state<Goal[]>([]);
 	let loading = $state(true);
 	let error = $state<string | null>(null);
 
@@ -35,13 +38,18 @@
 
 	onMount(async () => {
 		try {
+			// Initialize storage with mock data if empty
+			storageService.init();
+
 			const goalId = page.params?.goalId;
 			if (!goalId) {
 				error = 'Goal ID is required';
 				return;
 			}
-			const goals = mockGoals;
-			goal = goals.find((g) => g.id === goalId) || null;
+
+			// Load all goals for the ModalManager
+			goals = storageService.getGoals();
+			goal = storageService.getGoal(goalId);
 
 			if (!goal) {
 				error = 'Goal not found';
@@ -54,14 +62,29 @@
 		}
 	});
 
+	// Reactively update data when storage changes (for real-time updates)
+	function refreshData() {
+		if (goal) {
+			const updatedGoal = storageService.getGoal(goal.id);
+			if (updatedGoal) {
+				goal = updatedGoal;
+			}
+		}
+		goals = storageService.getGoals();
+	}
+
+	// Listen for storage changes to update the UI
+	if (typeof window !== 'undefined') {
+		window.addEventListener('storage', refreshData);
+	}
+
 	function handleGoBack() {
 		window.location.href = '/';
 	}
 
 	function handleEditGoal() {
 		if (goal) {
-			// TODO: Implement goal editing
-			console.log('Edit goal:', goal.title);
+			modalStore.openGoalModal(goal.id, 'edit');
 		}
 	}
 
@@ -124,6 +147,9 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- Modal Manager -->
+	<ModalManager {goals} />
 {/if}
 
 <style>

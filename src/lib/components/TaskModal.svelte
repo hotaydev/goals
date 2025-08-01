@@ -1,0 +1,366 @@
+<script lang="ts">
+	import type { Task } from '$lib/models/types';
+	import { calculatePriority, getPriorityLabel } from '$lib/services/priority';
+	import { formatTargetDate } from '$lib/services/date';
+	import { storageService } from '$lib/services/storage';
+	import { modalStore, type ModalMode } from '$lib/stores/modalStore';
+	import { Edit } from '@lucide/svelte';
+	import Modal from './Modal.svelte';
+	import SMARTSectionCompact from './SMARTSectionCompact.svelte';
+	import TaskForm, { type TaskFormData } from './TaskForm.svelte';
+	import TimeRemaining from './TimeRemaining.svelte';
+
+	interface Props {
+		task: Task | null;
+		isOpen: boolean;
+		mode: ModalMode;
+		milestoneId?: string; // For creating new tasks
+		onClose: () => void;
+	}
+
+	let { task, isOpen, mode, milestoneId, onClose }: Props = $props();
+
+	let isSubmitting = $state(false);
+
+	const priority = $derived(task ? calculatePriority(task.value, task.effort) : 0);
+	const priorityLabel = $derived(task ? getPriorityLabel(priority) : '');
+
+	const statusLabels = {
+		planned: 'Planned',
+		in_progress: 'In Progress',
+		done: 'Done'
+	};
+
+	// Default values for new tasks
+	const defaultTask = {
+		title: '',
+		description: '',
+		icon: '📝',
+		status: 'planned' as const,
+		value: 'high' as const,
+		effort: 'low' as const,
+		smart: {
+			specific: '',
+			measurable: '',
+			achievable: '',
+			relevant: '',
+			timeBound: ''
+		},
+		targetDate: {
+			year: new Date().getFullYear() + 1
+		}
+	};
+
+	async function handleSave(formData: Omit<TaskFormData, 'status'>) {
+		try {
+			isSubmitting = true;
+
+			if (mode === 'create') {
+				if (!milestoneId) throw new Error('Milestone ID is required for creating tasks');
+
+				const goalLocation = storageService.findMilestoneLocation(milestoneId);
+				if (!goalLocation) throw new Error('Goal not found');
+
+				await storageService.createTask(goalLocation, milestoneId, {
+					...formData,
+					status: 'planned'
+				});
+				modalStore.closeTaskModal();
+			} else if (mode === 'edit' && task) {
+				const location = storageService.findTaskLocation(task.id);
+				if (!location) throw new Error('Task location not found');
+
+				const updatedTask: Task = {
+					...task,
+					title: formData.title,
+					description: formData.description,
+					icon: formData.icon,
+					smart: formData.smart,
+					targetDate: formData.targetDate,
+					value: formData.value,
+					effort: formData.effort,
+					status: 'planned',
+					updatedAt: new Date().toISOString()
+				};
+
+				storageService.updateTask(location.goalId, location.milestoneId, updatedTask);
+				modalStore.setTaskMode('view');
+			}
+		} catch (error) {
+			console.error('Failed to save task:', error);
+			alert('Failed to save task. Please try again.');
+		} finally {
+			isSubmitting = false;
+		}
+	}
+
+	function handleCancel() {
+		if (mode === 'create') {
+			modalStore.closeTaskModal();
+		} else {
+			modalStore.setTaskMode('view');
+		}
+	}
+
+	function handleEdit() {
+		modalStore.setTaskMode('edit');
+	}
+</script>
+
+<Modal
+	{isOpen}
+	{onClose}
+	title={mode === 'create' ? 'Create New Task' : mode === 'edit' ? 'Edit Task' : 'Task Details'}
+>
+	<div class="task-modal-content">
+		{#if mode === 'edit' || mode === 'create'}
+			<!-- Edit/Create Mode -->
+			{@const taskData = task || defaultTask}
+			<TaskForm
+				title={taskData.title}
+				description={taskData.description}
+				icon={taskData.icon}
+				smart={taskData.smart}
+				targetDate={taskData.targetDate}
+				value={taskData.value}
+				effort={taskData.effort}
+				status={taskData.status}
+				onSave={handleSave}
+				onCancel={handleCancel}
+				{isSubmitting}
+			/>
+		{:else if task}
+			<!-- View Mode -->
+			<!-- Task Header -->
+			<div class="task-header-section">
+				<div class="task-title-area">
+					{#if task.icon}
+						<span class="task-icon">{task.icon}</span>
+					{/if}
+					<div class="task-text">
+						<div class="task-title">
+							<h3>{task.title}</h3>
+							<div class="priority-badge priority-{priority}">
+								{priorityLabel}
+							</div>
+							<div class="status-badge status-{task.status}">
+								{statusLabels[task.status]}
+							</div>
+						</div>
+						<p class="task-description">{task.description}</p>
+					</div>
+					<div class="header-actions">
+						<button class="action-button" onclick={handleEdit} title="Edit task">
+							<Edit size={16} />
+						</button>
+					</div>
+				</div>
+
+				<div class="task-meta-info">
+					<div class="target-date-info">
+						<TimeRemaining
+							targetDate={task.targetDate}
+							size="medium"
+							extraText={`Expected by ${formatTargetDate(task.targetDate)}`}
+						/>
+					</div>
+				</div>
+			</div>
+
+			<!-- SMART Criteria Section -->
+			<SMARTSectionCompact smart={task.smart} />
+		{:else}
+			<div class="error-state">
+				<p>Task not found</p>
+			</div>
+		{/if}
+	</div>
+</Modal>
+
+<style>
+	.task-modal-content {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-md);
+		min-width: 600px;
+		max-width: 800px;
+	}
+
+	.task-header-section {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-md);
+		padding-bottom: var(--spacing-md);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.task-title-area {
+		display: flex;
+		align-items: flex-start;
+		gap: var(--spacing-md);
+	}
+
+	.header-actions {
+		margin-left: auto;
+		display: flex;
+		gap: var(--spacing-sm);
+	}
+
+	.task-icon {
+		font-size: 2rem;
+		line-height: 1;
+		flex-shrink: 0;
+	}
+
+	.task-text {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.task-text h3 {
+		margin: 0 0 var(--spacing-xs) 0;
+		color: var(--color-text-primary);
+		font-size: 1.25rem;
+	}
+
+	.task-description {
+		margin: 0;
+		color: var(--color-text-secondary);
+		line-height: 1.6;
+	}
+
+	.task-meta-info {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-sm);
+	}
+
+	.task-title {
+		display: flex;
+		align-items: center;
+		justify-content: start;
+		gap: var(--spacing-sm);
+		flex-wrap: wrap;
+	}
+
+	.priority-badge,
+	.status-badge {
+		padding: var(--spacing-xs) var(--spacing-sm);
+		border-radius: var(--radius-md);
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+	}
+
+	.priority-badge.priority-5 {
+		background-color: var(--color-success);
+		color: white;
+	}
+
+	.priority-badge.priority-4 {
+		background-color: var(--color-primary);
+		color: white;
+	}
+
+	.priority-badge.priority-2 {
+		background-color: var(--color-warning);
+		color: white;
+	}
+
+	.priority-badge.priority-1 {
+		background-color: var(--color-error);
+		color: white;
+	}
+
+	.status-badge.status-planned {
+		background-color: var(--color-text-muted);
+		color: white;
+	}
+
+	.status-badge.status-in_progress {
+		background-color: var(--color-warning);
+		color: white;
+	}
+
+	.status-badge.status-done {
+		background-color: var(--color-success);
+		color: white;
+	}
+
+	.target-date-info {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-sm);
+	}
+
+	.date-section {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-sm);
+	}
+
+	.date-label {
+		font-size: 0.875rem;
+		color: var(--color-text-muted);
+		font-weight: 500;
+		text-transform: uppercase;
+	}
+
+	.date-value {
+		font-size: 1rem;
+		color: var(--color-text-secondary);
+		font-weight: 500;
+	}
+
+	.action-button {
+		padding: var(--spacing-sm) var(--spacing-md);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		background-color: var(--color-background);
+		color: var(--color-text-secondary);
+		cursor: pointer;
+		transition: all 0.2s ease;
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-xs);
+		font-size: 0.875rem;
+		font-weight: 500;
+	}
+
+	.action-button:hover {
+		background-color: var(--color-surface);
+		border-color: var(--color-text-muted);
+		color: var(--color-text-primary);
+	}
+
+	.error-state {
+		padding: var(--spacing-lg);
+		text-align: center;
+		color: var(--color-text-muted);
+	}
+
+	@media (max-width: 768px) {
+		.task-modal-content {
+			min-width: unset;
+			width: 100%;
+		}
+
+		.task-header-section {
+			gap: var(--spacing-md);
+		}
+
+		.task-text h3 {
+			font-size: 1.25rem;
+		}
+
+		.task-meta-info {
+			gap: var(--spacing-sm);
+		}
+
+		.meta-row {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: var(--spacing-sm);
+		}
+	}
+</style>

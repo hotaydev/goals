@@ -2,24 +2,32 @@
 	import type { Task } from '$lib/models/types';
 	import { calculatePriority, getPriorityLabel } from '$lib/services/priority';
 	import { formatTargetDate } from '$lib/services/date';
+	import { modalStore } from '$lib/stores/modalStore';
+	import { Edit } from '@lucide/svelte';
+	import TimeRemaining from './TimeRemaining.svelte';
 
-	let { task }: { task: Task } = $props();
+	interface Props {
+		task: Task;
+	}
+
+	let { task }: Props = $props();
 
 	const priority = $derived(calculatePriority(task.value, task.effort));
 	const priorityLabel = $derived(getPriorityLabel(priority));
 
 	function handleTaskClick() {
-		// TODO: Open task details modal
-		console.log('Task clicked:', task.title);
+		modalStore.openTaskModal(task.id);
+	}
+
+	function handleEditClick(event: Event) {
+		event.stopPropagation();
+		modalStore.openTaskModal(task.id, 'edit');
 	}
 </script>
 
-<button
-	class="task-card priority-{priority}"
-	onclick={handleTaskClick}
-	onkeydown={(e) => e.key === 'Enter' && handleTaskClick()}
-	tabindex="0"
->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="task-card priority-{priority}" onclick={handleTaskClick}>
 	<div class="task-header">
 		{#if task.icon}
 			<span class="task-icon">{task.icon}</span>
@@ -30,17 +38,25 @@
 				{priorityLabel}
 			</div>
 		</div>
+		<div class="task-actions">
+			<button class="action-button" onclick={handleEditClick} title="Edit task">
+				<Edit size={14} />
+			</button>
+		</div>
 	</div>
 
 	<p class="task-description">{task.description}</p>
 
 	<div class="task-footer">
 		<div class="task-dates">
-			<span class="date-label">Target date:</span>
-			<span class="date-value">{formatTargetDate(task.targetDate)}</span>
+			<div class="task-date-section">
+				<span class="date-label">Target date:</span>
+				<span class="date-value">{formatTargetDate(task.targetDate)}</span>
+			</div>
+			<TimeRemaining targetDate={task.targetDate} size="small" />
 		</div>
 	</div>
-</button>
+</div>
 
 <style>
 	.task-card {
@@ -71,6 +87,12 @@
 		gap: var(--spacing-sm);
 	}
 
+	.task-actions {
+		margin-left: auto;
+		display: flex;
+		gap: var(--spacing-xs);
+	}
+
 	.task-icon {
 		font-size: 1.25rem;
 		line-height: 1;
@@ -99,7 +121,7 @@
 		font-size: 0.625rem;
 		font-weight: 600;
 		text-transform: uppercase;
-		letter-spacing: 0.025em;
+
 		align-self: flex-start;
 	}
 
@@ -141,6 +163,12 @@
 
 	.task-dates {
 		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-xs);
+	}
+
+	.task-date-section {
+		display: flex;
 		justify-content: space-between;
 		align-items: center;
 	}
@@ -154,6 +182,33 @@
 	.date-value {
 		font-size: 0.625rem;
 		color: var(--color-text-secondary);
+	}
+
+	.action-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 24px;
+		height: 24px;
+		padding: 2px;
+		background-color: var(--color-background);
+		color: var(--color-text-secondary);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		cursor: pointer;
+		transition: all var(--transition-fast);
+		opacity: 0;
+	}
+
+	.task-card:hover .action-button {
+		opacity: 1;
+	}
+
+	.action-button:hover {
+		background-color: var(--color-surface);
+		border-color: var(--color-text-muted);
+		color: var(--color-text-primary);
+		transform: scale(1.05);
 	}
 
 	/* Priority border indicators */

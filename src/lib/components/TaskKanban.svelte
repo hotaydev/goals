@@ -5,9 +5,10 @@
 
 	interface Props {
 		tasks: Task[];
+		compact?: boolean;
 	}
 
-	let { tasks }: Props = $props();
+	let { tasks, compact = false }: Props = $props();
 
 	const sortedTasks = $derived(
 		[...tasks].sort((a, b) => {
@@ -28,7 +29,7 @@
 	const doneTasks = $derived(sortedTasks.filter((task) => task.status === 'done'));
 </script>
 
-<div class="task-kanban">
+<div class="task-kanban" class:compact>
 	<div class="kanban-column">
 		<div class="column-header planned">
 			<h4>Planned</h4>
@@ -89,6 +90,11 @@
 		min-height: 200px;
 	}
 
+	.task-kanban.compact {
+		gap: var(--spacing-md);
+		min-height: 150px;
+	}
+
 	.kanban-column {
 		display: flex;
 		flex-direction: column;
@@ -107,12 +113,15 @@
 		background-color: var(--color-surface);
 	}
 
+	.task-kanban.compact .column-header {
+		padding: var(--spacing-sm);
+	}
+
 	.column-header h4 {
 		margin: 0;
 		font-size: 0.875rem;
 		font-weight: 600;
 		text-transform: uppercase;
-		letter-spacing: 0.025em;
 	}
 
 	.column-header.planned {
@@ -157,6 +166,11 @@
 		flex-direction: column;
 		gap: var(--spacing-sm);
 		overflow-y: auto;
+	}
+
+	.task-kanban.compact .column-content {
+		padding: var(--spacing-sm);
+		gap: var(--spacing-xs);
 	}
 
 	.empty-column {

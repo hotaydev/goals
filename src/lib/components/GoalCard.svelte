@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { Goal, GoalCardProps } from '$lib/models/types';
 	import { getGoalCompletionPercentage } from '$lib/services/percentage';
+	import ProgressBar from './ProgressBar.svelte';
+	import TimeRemaining from './TimeRemaining.svelte';
 
 	let { goal, onclick }: GoalCardProps = $props();
 
@@ -57,18 +59,15 @@
 	</div>
 
 	<div class="goal-meta">
-		<div class="goal-date">
-			Target: {formatTargetDate(goal.targetDate)}
+		<div class="goal-dates">
+			<TimeRemaining
+				targetDate={goal.targetDate}
+				size="medium"
+				extraText={`Expected by ${formatTargetDate(goal.targetDate)}`}
+			/>
 		</div>
-		<div class="progress-section">
-			<div class="progress-bar">
-				<div
-					class="progress-fill"
-					style="width: {getGoalCompletionPercentage(goal.milestones)}%"
-				></div>
-			</div>
-			<span class="progress-text">{getGoalCompletionPercentage(goal.milestones)}% Complete</span>
-		</div>
+
+		<ProgressBar percentage={getGoalCompletionPercentage(goal.milestones)} size="md" />
 	</div>
 </div>
 
@@ -88,11 +87,12 @@
 
 	.goal-card:focus {
 		outline: none;
+		border: 2px solid var(--color-primary);
 	}
 
 	.goal-header {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		gap: var(--spacing-md);
 	}
 
@@ -132,37 +132,9 @@
 		gap: var(--spacing-sm);
 	}
 
-	.goal-date {
-		font-size: 0.875rem;
-		color: var(--color-text-muted);
-		font-weight: 500;
-	}
-
-	.progress-section {
+	.goal-dates {
 		display: flex;
-		align-items: center;
-		gap: var(--spacing-sm);
-	}
-
-	.progress-bar {
-		flex: 1;
-		height: 0.5rem;
-		background-color: var(--color-surface-elevated);
-		border-radius: var(--radius-sm);
-		overflow: hidden;
-	}
-
-	.progress-fill {
-		height: 100%;
-		background-color: var(--color-primary);
-		transition: width var(--transition-normal);
-		border-radius: var(--radius-sm);
-	}
-
-	.progress-text {
-		font-size: 0.875rem;
-		color: var(--color-text-secondary);
-		white-space: nowrap;
-		font-weight: 500;
+		flex-direction: column;
+		gap: var(--spacing-xs);
 	}
 </style>

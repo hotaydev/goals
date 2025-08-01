@@ -3,20 +3,32 @@
 	import { onMount } from 'svelte';
 	import GoalCard from '$lib/components/GoalCard.svelte';
 	import type { Goal } from '$lib/models/types';
-	import { mockGoals } from '$lib/data/goals';
+	import { storageService } from '$lib/services/storage';
 
 	let goals = $state<Goal[]>([]);
 	let loading = $state(true);
 
 	onMount(async () => {
 		try {
-			goals = mockGoals;
+			// Initialize storage with mock data if empty
+			storageService.init();
+			goals = storageService.getGoals();
 		} catch (error) {
 			console.error('Failed to load goals:', error);
 		} finally {
 			loading = false;
 		}
 	});
+
+	// Reactively update data when storage changes
+	function refreshData() {
+		goals = storageService.getGoals();
+	}
+
+	// Listen for storage changes to update the UI
+	if (typeof window !== 'undefined') {
+		window.addEventListener('storage', refreshData);
+	}
 
 	function handleAddGoal() {
 		// TODO: Implement goal creation flow

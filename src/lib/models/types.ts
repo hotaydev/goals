@@ -27,8 +27,8 @@ export interface Task {
 	effort: ValueEffortLevel;
 	smart: SMARTCriteria;
 	targetDate: TargetDate;
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface Milestone {
@@ -41,8 +41,8 @@ export interface Milestone {
 	smart: SMARTCriteria;
 	targetDate: TargetDate;
 	tasks: Task[];
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface Goal {
@@ -53,8 +53,8 @@ export interface Goal {
 	targetDate: TargetDate;
 	smart: SMARTCriteria;
 	milestones: Milestone[];
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface GoalCardProps {

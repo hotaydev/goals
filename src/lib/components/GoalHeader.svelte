@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Goal } from '$lib/models/types';
 	import { getGoalCompletionPercentage } from '$lib/services/percentage';
-	import { formatTargetDate } from '$lib/services/date';
 	import ProgressBar from './ProgressBar.svelte';
+	import TimeRemaining from './TimeRemaining.svelte';
 
 	let { goal }: { goal: Goal } = $props();
 
@@ -16,23 +16,16 @@
 				<div class="goal-icon">{goal.icon}</div>
 			{/if}
 			<div class="goal-text">
-				<h1>{goal.title}</h1>
+				<div class="goal-title-section">
+					<h1>{goal.title}</h1>
+					<TimeRemaining targetDate={goal.targetDate} size="large" />
+				</div>
 				<p class="goal-description">{goal.description}</p>
 			</div>
 		</div>
-
-		<div class="goal-meta">
-			<div class="target-date">
-				<span class="label">Target Date:</span>
-				<span class="value">{formatTargetDate(goal.targetDate, { monthFormat: 'long' })}</span>
-			</div>
-		</div>
 	</div>
 
-	<div class="goal-progress">
-		<h3>Overall Progress</h3>
-		<ProgressBar percentage={completionPercentage} size="lg" />
-	</div>
+	<ProgressBar percentage={completionPercentage} size="lg" />
 </div>
 
 <style>
@@ -43,7 +36,7 @@
 		padding: var(--spacing-xl);
 		display: flex;
 		flex-direction: column;
-		gap: var(--spacing-lg);
+		gap: var(--spacing-md);
 	}
 
 	.goal-info {
@@ -83,46 +76,6 @@
 		line-height: 1.6;
 	}
 
-	.goal-meta {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--spacing-lg);
-		padding-top: var(--spacing-md);
-		border-top: 1px solid var(--color-border);
-	}
-
-	.target-date {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: var(--spacing-xs);
-	}
-
-	.label {
-		font-size: 0.875rem;
-		font-weight: 500;
-		color: var(--color-text-muted);
-		text-transform: uppercase;
-	}
-
-	.value {
-		font-size: 1rem;
-		font-weight: 600;
-		color: var(--color-text-primary);
-	}
-
-	.goal-progress {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-md);
-	}
-
-	.goal-progress h3 {
-		margin: 0;
-		font-size: 1.125rem;
-		color: var(--color-text-primary);
-	}
-
 	@media (max-width: 768px) {
 		.goal-header {
 			padding: var(--spacing-lg);
@@ -140,10 +93,6 @@
 
 		.goal-description {
 			font-size: 1rem;
-		}
-
-		.goal-meta {
-			justify-content: center;
 		}
 	}
 </style>

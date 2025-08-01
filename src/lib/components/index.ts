@@ -1,8 +1,20 @@
 // Component exports
 export { default as GoalCard } from './GoalCard.svelte';
 export { default as GoalHeader } from './GoalHeader.svelte';
-export { default as SMARTSection } from './SMARTSection.svelte';
+export { default as GoalModal } from './GoalModal.svelte';
+export { default as GoalForm } from './GoalForm.svelte';
 export { default as MilestoneCard } from './MilestoneCard.svelte';
+export { default as MilestoneModal } from './MilestoneModal.svelte';
+export { default as Modal } from './Modal.svelte';
+export { default as ModalManager } from './ModalManager.svelte';
+export { default as ProgressBar } from './ProgressBar.svelte';
+export { default as SMARTSection } from './SMARTSection.svelte';
+export { default as SMARTSectionCompact } from './SMARTSectionCompact.svelte';
 export { default as TaskCard } from './TaskCard.svelte';
 export { default as TaskKanban } from './TaskKanban.svelte';
-export { default as ProgressBar } from './ProgressBar.svelte';
+export { default as TaskList } from './TaskList.svelte';
+export { default as TaskModal } from './TaskModal.svelte';
+export { default as ThemeSwitcher } from './ThemeSwitcher.svelte';
+export { default as TimeRemaining } from './TimeRemaining.svelte';
+export { default as EditableForm } from './EditableForm.svelte';
+export { default as TaskForm } from './TaskForm.svelte';

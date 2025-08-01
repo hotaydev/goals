@@ -2,33 +2,30 @@
 	interface Props {
 		percentage: number;
 		size?: 'sm' | 'md' | 'lg';
-		showLabel?: boolean;
 		color?: 'primary' | 'success' | 'warning' | 'error';
 	}
 
-	let { percentage, size = 'md', showLabel = true, color = 'primary' }: Props = $props();
+	let { percentage, size = 'md', color = 'primary' }: Props = $props();
 
 	// Ensure percentage is between 0 and 100
 	const clampedPercentage = $derived(Math.min(Math.max(percentage, 0), 100));
 </script>
 
 <div class="progress-container {size}">
-	{#if showLabel}
-		<div class="progress-label">
-			<span class="percentage">{clampedPercentage.toFixed(1)}%</span>
-		</div>
-	{/if}
 	<div class="progress-bar">
 		<div class="progress-fill {color}" style="width: {clampedPercentage}%"></div>
+	</div>
+	<div class="progress-label">
+		<span class="percentage">{clampedPercentage.toFixed(1)}%</span>
 	</div>
 </div>
 
 <style>
 	.progress-container {
 		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-xs);
+		gap: var(--spacing-md);
 		width: 100%;
+		align-items: center;
 	}
 
 	.progress-container.sm {
