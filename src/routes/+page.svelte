@@ -3,14 +3,14 @@
 	import { onMount } from 'svelte';
 	import GoalCard from '$lib/components/GoalCard.svelte';
 	import type { Goal } from '$lib/models/types';
-	import { getMockGoals } from '$lib/data/goals';
+	import { mockGoals } from '$lib/data/goals';
 
 	let goals = $state<Goal[]>([]);
 	let loading = $state(true);
 
 	onMount(async () => {
 		try {
-			goals = await getMockGoals();
+			goals = mockGoals;
 		} catch (error) {
 			console.error('Failed to load goals:', error);
 		} finally {
@@ -24,8 +24,8 @@
 	}
 
 	function handleGoalClick(goal: Goal) {
-		// TODO: Navigate to goal detail page
-		console.log('Goal clicked:', goal.title);
+		// Navigate to goal detail page
+		window.location.href = `/goal/${goal.id}`;
 	}
 </script>
 

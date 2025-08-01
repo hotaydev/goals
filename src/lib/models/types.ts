@@ -3,6 +3,12 @@
 export type TaskStatus = 'planned' | 'in_progress' | 'done';
 export type ValueEffortLevel = 'high' | 'low';
 
+export interface TargetDate {
+	year: number;
+	month?: number;
+	day?: number;
+}
+
 export interface SMARTCriteria {
 	specific: string;
 	measurable: string;
@@ -20,6 +26,7 @@ export interface Task {
 	value: ValueEffortLevel;
 	effort: ValueEffortLevel;
 	smart: SMARTCriteria;
+	targetDate: TargetDate;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -32,6 +39,7 @@ export interface Milestone {
 	value: ValueEffortLevel;
 	effort: ValueEffortLevel;
 	smart: SMARTCriteria;
+	targetDate: TargetDate;
 	tasks: Task[];
 	createdAt: Date;
 	updatedAt: Date;
@@ -42,11 +50,7 @@ export interface Goal {
 	title: string;
 	description: string;
 	icon?: string;
-	targetDate: {
-		year: number;
-		month?: number;
-		day?: number;
-	};
+	targetDate: TargetDate;
 	smart: SMARTCriteria;
 	milestones: Milestone[];
 	createdAt: Date;

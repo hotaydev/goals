@@ -10,7 +10,7 @@ export function getGoalCompletionPercentage(milestones: Milestone[]): number {
 		const milestoneCompletionPercentage = getMilestoneCompletionPercentage(milestone.tasks);
 
 		totalPoints += priorityPoints;
-		completedPoints += priorityPoints * milestoneCompletionPercentage;
+		completedPoints += priorityPoints * (milestoneCompletionPercentage / 100);
 	}
 
 	const percentage = (completedPoints / totalPoints) * 100;
@@ -27,7 +27,8 @@ export function getMilestoneCompletionPercentage(tasks: Task[]): number {
 		completedPoints += priorityPoints * getTaskPointsBasedOnStatus(task.status);
 	}
 
-	return Math.round((completedPoints / totalPoints) * 10) / 10; // Round to 1 decimal place
+	const percentage = (completedPoints / totalPoints) * 100;
+	return Math.round(percentage * 10) / 10; // Round to 1 decimal place
 }
 
 function getTaskPointsBasedOnStatus(status: TaskStatus): number {

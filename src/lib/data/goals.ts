@@ -35,6 +35,10 @@ export const mockGoals: Goal[] = [
 					relevant: 'Frontend skills are essential for modern web development',
 					timeBound: 'Complete by June 2025'
 				},
+				targetDate: {
+					year: 2025,
+					month: 6
+				},
 				tasks: [
 					{
 						id: '1-1-1',
@@ -50,6 +54,11 @@ export const mockGoals: Goal[] = [
 							achievable: 'Dedicate 1 hour daily for 4 weeks',
 							relevant: 'React is widely used in the industry',
 							timeBound: 'Complete by March 2024'
+						},
+						targetDate: {
+							year: 2024,
+							month: 3,
+							day: 15
 						},
 						createdAt: new Date('2024-01-15'),
 						updatedAt: new Date('2024-03-15')
@@ -69,6 +78,11 @@ export const mockGoals: Goal[] = [
 							relevant: 'TypeScript improves code quality and developer experience',
 							timeBound: 'Complete by April 2024'
 						},
+						targetDate: {
+							year: 2024,
+							month: 4,
+							day: 30
+						},
 						createdAt: new Date('2024-02-01'),
 						updatedAt: new Date('2024-03-20')
 					},
@@ -87,6 +101,10 @@ export const mockGoals: Goal[] = [
 							achievable: 'Use learned skills and design inspiration',
 							relevant: 'Portfolio demonstrates skills to potential employers',
 							timeBound: 'Complete by May 2024'
+						},
+						targetDate: {
+							year: 2024,
+							month: 5
 						},
 						createdAt: new Date('2024-03-01'),
 						updatedAt: new Date('2024-03-01')
@@ -109,13 +127,17 @@ export const mockGoals: Goal[] = [
 					relevant: 'Backend skills complete full-stack capabilities',
 					timeBound: 'Complete by December 2025'
 				},
+				targetDate: {
+					year: 2025,
+					month: 12
+				},
 				tasks: [
 					{
 						id: '1-2-1',
 						title: 'Learn Node.js and Express',
 						description: 'Master backend JavaScript development',
 						icon: '🟢',
-						status: 'planned',
+						status: 'in_progress',
 						value: 'high',
 						effort: 'low',
 						smart: {
@@ -124,6 +146,10 @@ export const mockGoals: Goal[] = [
 							achievable: 'Follow official guides and best practices',
 							relevant: 'Node.js allows using JavaScript for full-stack development',
 							timeBound: 'Complete by July 2024'
+						},
+						targetDate: {
+							year: 2024,
+							month: 7
 						},
 						createdAt: new Date('2024-04-01'),
 						updatedAt: new Date('2024-04-01')
@@ -142,6 +168,11 @@ export const mockGoals: Goal[] = [
 							achievable: 'Practice with real-world scenarios and optimization',
 							relevant: 'Data persistence is crucial for all applications',
 							timeBound: 'Complete by September 2024'
+						},
+						targetDate: {
+							year: 2024,
+							month: 9,
+							day: 30
 						},
 						createdAt: new Date('2024-05-01'),
 						updatedAt: new Date('2024-05-01')
@@ -164,6 +195,10 @@ export const mockGoals: Goal[] = [
 					relevant: 'DevOps skills are essential for production applications',
 					timeBound: 'Complete by June 2026'
 				},
+				targetDate: {
+					year: 2026,
+					month: 6
+				},
 				tasks: [
 					{
 						id: '1-3-1',
@@ -179,6 +214,11 @@ export const mockGoals: Goal[] = [
 							achievable: 'Follow Docker tutorials and best practices',
 							relevant: 'Containers solve deployment consistency issues',
 							timeBound: 'Complete by January 2025'
+						},
+						targetDate: {
+							year: 2025,
+							month: 1,
+							day: 31
 						},
 						createdAt: new Date('2024-10-01'),
 						updatedAt: new Date('2024-10-01')
@@ -223,6 +263,10 @@ export const mockGoals: Goal[] = [
 					relevant: 'Core principles that improve code quality',
 					timeBound: 'Complete 15 books by December 2025'
 				},
+				targetDate: {
+					year: 2025,
+					month: 12
+				},
 				tasks: [
 					{
 						id: '2-1-1',
@@ -238,6 +282,11 @@ export const mockGoals: Goal[] = [
 							achievable: 'Read 2 chapters per week for 8 weeks',
 							relevant: 'Clean code principles are fundamental to good development',
 							timeBound: 'Complete by March 2024'
+						},
+						targetDate: {
+							year: 2024,
+							month: 3,
+							day: 15
 						},
 						createdAt: new Date('2024-02-01'),
 						updatedAt: new Date('2024-03-15')
@@ -257,6 +306,11 @@ export const mockGoals: Goal[] = [
 							relevant: 'Design patterns solve common programming problems',
 							timeBound: 'Complete by June 2024'
 						},
+						targetDate: {
+							year: 2024,
+							month: 6,
+							day: 30
+						},
 						createdAt: new Date('2024-03-01'),
 						updatedAt: new Date('2024-03-20')
 					},
@@ -274,6 +328,11 @@ export const mockGoals: Goal[] = [
 							achievable: 'Read case studies and practice with online resources',
 							relevant: 'System design skills are crucial for senior roles',
 							timeBound: 'Complete by August 2024'
+						},
+						targetDate: {
+							year: 2024,
+							month: 8,
+							day: 31
 						},
 						createdAt: new Date('2024-04-01'),
 						updatedAt: new Date('2024-04-01')
@@ -297,6 +356,10 @@ export const mockGoals: Goal[] = [
 					relevant: 'Advanced knowledge differentiates senior engineers',
 					timeBound: 'Complete 20 books by December 2027'
 				},
+				targetDate: {
+					year: 2027,
+					month: 12
+				},
 				tasks: [
 					{
 						id: '2-2-1',
@@ -312,6 +375,11 @@ export const mockGoals: Goal[] = [
 							achievable: 'Read consistently and implement concepts',
 							relevant: 'Data systems are core to modern applications',
 							timeBound: 'Complete by December 2024'
+						},
+						targetDate: {
+							year: 2024,
+							month: 12,
+							day: 31
 						},
 						createdAt: new Date('2024-08-01'),
 						updatedAt: new Date('2024-08-01')
@@ -334,6 +402,10 @@ export const mockGoals: Goal[] = [
 					relevant: 'Leadership skills are essential for career progression',
 					timeBound: 'Complete 15 books by December 2028'
 				},
+				targetDate: {
+					year: 2028,
+					month: 12
+				},
 				tasks: [
 					{
 						id: '2-3-1',
@@ -349,6 +421,11 @@ export const mockGoals: Goal[] = [
 							achievable: 'Read during breaks and apply concepts gradually',
 							relevant: 'Understanding leadership path helps career planning',
 							timeBound: 'Complete by March 2025'
+						},
+						targetDate: {
+							year: 2025,
+							month: 3,
+							day: 31
 						},
 						createdAt: new Date('2025-01-01'),
 						updatedAt: new Date('2025-01-01')
@@ -393,6 +470,10 @@ export const mockGoals: Goal[] = [
 					relevant: 'Validation prevents building products nobody wants',
 					timeBound: 'Complete market research by September 2024'
 				},
+				targetDate: {
+					year: 2024,
+					month: 9
+				},
 				tasks: [
 					{
 						id: '3-1-1',
@@ -408,6 +489,11 @@ export const mockGoals: Goal[] = [
 							achievable: 'Use network and online communities for interviews',
 							relevant: 'Understanding real problems is foundation of successful products',
 							timeBound: 'Complete by June 2024'
+						},
+						targetDate: {
+							year: 2024,
+							month: 6,
+							day: 30
 						},
 						createdAt: new Date('2024-03-10'),
 						updatedAt: new Date('2024-03-10')
@@ -427,6 +513,11 @@ export const mockGoals: Goal[] = [
 							relevant: 'Understanding competition helps position product effectively',
 							timeBound: 'Complete by July 2024'
 						},
+						targetDate: {
+							year: 2024,
+							month: 7,
+							day: 31
+						},
 						createdAt: new Date('2024-04-01'),
 						updatedAt: new Date('2024-04-01')
 					},
@@ -444,6 +535,11 @@ export const mockGoals: Goal[] = [
 							achievable: 'Use design tools and customer feedback sessions',
 							relevant: 'Early validation reduces risk of building wrong product',
 							timeBound: 'Complete validation by August 2024'
+						},
+						targetDate: {
+							year: 2024,
+							month: 9,
+							day: 30
 						},
 						createdAt: new Date('2024-05-01'),
 						updatedAt: new Date('2024-05-01')
@@ -466,6 +562,10 @@ export const mockGoals: Goal[] = [
 					relevant: 'MVP allows early customer feedback and faster iteration',
 					timeBound: 'Complete MVP development by March 2025'
 				},
+				targetDate: {
+					year: 2025,
+					month: 3
+				},
 				tasks: [
 					{
 						id: '3-2-1',
@@ -481,6 +581,11 @@ export const mockGoals: Goal[] = [
 							achievable: 'Use proven patterns and cloud-native approaches',
 							relevant: 'Good architecture enables rapid development and scaling',
 							timeBound: 'Complete architecture by October 2024'
+						},
+						targetDate: {
+							year: 2024,
+							month: 10,
+							day: 31
 						},
 						createdAt: new Date('2024-09-01'),
 						updatedAt: new Date('2024-09-01')
@@ -500,6 +605,11 @@ export const mockGoals: Goal[] = [
 							relevant: 'Core features demonstrate product value to early users',
 							timeBound: 'Complete core features by January 2025'
 						},
+						targetDate: {
+							year: 2025,
+							month: 1,
+							day: 31
+						},
 						createdAt: new Date('2024-10-01'),
 						updatedAt: new Date('2024-10-01')
 					},
@@ -517,6 +627,11 @@ export const mockGoals: Goal[] = [
 							achievable: 'Use Stripe APIs and follow security best practices',
 							relevant: 'Payment system is essential for SaaS revenue model',
 							timeBound: 'Complete billing system by February 2025'
+						},
+						targetDate: {
+							year: 2025,
+							month: 1,
+							day: 31
 						},
 						createdAt: new Date('2024-12-01'),
 						updatedAt: new Date('2024-12-01')
@@ -539,6 +654,10 @@ export const mockGoals: Goal[] = [
 					relevant: 'Growth validates product-market fit and business viability',
 					timeBound: 'Reach growth targets by June 2027'
 				},
+				targetDate: {
+					year: 2027,
+					month: 6
+				},
 				tasks: [
 					{
 						id: '3-3-1',
@@ -554,6 +673,11 @@ export const mockGoals: Goal[] = [
 							achievable: 'Use personal network and online communities for recruitment',
 							relevant: 'Beta testing helps identify issues before public launch',
 							timeBound: 'Complete beta program by April 2025'
+						},
+						targetDate: {
+							year: 2025,
+							month: 4,
+							day: 30
 						},
 						createdAt: new Date('2025-03-01'),
 						updatedAt: new Date('2025-03-01')
@@ -573,6 +697,11 @@ export const mockGoals: Goal[] = [
 							relevant: 'Public launch creates awareness and initial customer base',
 							timeBound: 'Execute launch by June 2025'
 						},
+						targetDate: {
+							year: 2025,
+							month: 6,
+							day: 30
+						},
 						createdAt: new Date('2025-05-01'),
 						updatedAt: new Date('2025-05-01')
 					},
@@ -591,6 +720,11 @@ export const mockGoals: Goal[] = [
 							relevant: 'Consistent marketing is essential for sustainable growth',
 							timeBound: 'Scale to 100 customers by December 2026'
 						},
+						targetDate: {
+							year: 2026,
+							month: 12,
+							day: 31
+						},
 						createdAt: new Date('2025-06-01'),
 						updatedAt: new Date('2025-06-01')
 					}
@@ -603,12 +737,3 @@ export const mockGoals: Goal[] = [
 		updatedAt: new Date('2024-03-10')
 	}
 ];
-
-// Helper function to get mock data (simulating API call)
-export function getMockGoals(): Promise<Goal[]> {
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			resolve(mockGoals);
-		}, 100);
-	});
-}
