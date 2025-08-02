@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { TargetDate } from '$lib/models/types';
-	import { calculateTimeRemaining } from '$lib/services/date';
+	import { calculateTimeRemaining, formatTargetDate } from '$lib/services/date';
 	import { Clock, AlertTriangle, CheckCircle } from '@lucide/svelte';
 
 	interface Props {
@@ -30,7 +30,10 @@
 	});
 </script>
 
-<div class="time-remaining time-{timeRemaining.category} size-{size}">
+<div
+	class="time-remaining time-{timeRemaining.category} size-{size}"
+	title={formatTargetDate(targetDate, { monthFormat: 'long' })}
+>
 	{#if showIcon}
 		{@const IconComponent = icon()}
 		<IconComponent class="time-icon" size={size === 'small' ? 12 : size === 'medium' ? 14 : 16} />

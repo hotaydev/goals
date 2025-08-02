@@ -3,6 +3,8 @@
 	import MilestoneModal from './MilestoneModal.svelte';
 	import TaskModal from './TaskModal.svelte';
 	import GoalModal from './GoalModal.svelte';
+	import GoalCreationModal from './GoalCreationModal.svelte';
+	import DeleteConfirmationModal from './DeleteConfirmationModal.svelte';
 	import type { Goal } from '$lib/models/types';
 
 	interface Props {
@@ -53,12 +55,7 @@
 {#if $modalStore.goalModalOpen}
 	{@const goal = currentGoal()}
 	{#if goal}
-		<GoalModal
-			{goal}
-			isOpen={true}
-			mode={$modalStore.goalMode}
-			onClose={() => modalStore.closeGoalModal()}
-		/>
+		<GoalModal {goal} isOpen={true} onClose={() => modalStore.closeGoalModal()} />
 	{/if}
 {/if}
 
@@ -81,5 +78,21 @@
 		mode={$modalStore.taskMode}
 		milestoneId={$modalStore.createTaskMilestoneId}
 		onClose={() => modalStore.closeTaskModal()}
+	/>
+{/if}
+
+{#if $modalStore.goalCreationModalOpen}
+	<GoalCreationModal isOpen={true} onClose={() => modalStore.closeGoalCreationModal()} />
+{/if}
+
+{#if $modalStore.deleteConfirmationModalOpen && $modalStore.deleteConfirmation}
+	<DeleteConfirmationModal
+		isOpen={true}
+		title={$modalStore.deleteConfirmation.title}
+		message={$modalStore.deleteConfirmation.message}
+		itemName={$modalStore.deleteConfirmation.itemName}
+		itemType={$modalStore.deleteConfirmation.itemType}
+		onConfirm={$modalStore.deleteConfirmation.onConfirm}
+		onCancel={() => modalStore.closeDeleteConfirmationModal()}
 	/>
 {/if}

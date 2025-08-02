@@ -357,8 +357,8 @@
 	}
 
 	.button-primary:hover:not(:disabled) {
-		background-color: var(--color-primary-dark);
-		border-color: var(--color-primary-dark);
+		background-color: var(--color-primary-hover);
+		border-color: var(--color-primary-hover);
 	}
 
 	.button-primary:disabled {

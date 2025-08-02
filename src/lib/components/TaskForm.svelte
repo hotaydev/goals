@@ -10,7 +10,6 @@
 		targetDate: TargetDate;
 		value: ValueEffortLevel;
 		effort: ValueEffortLevel;
-		status: TaskStatus;
 		onSave: (data: Omit<TaskFormData, 'status'>) => void;
 		onCancel: () => void;
 		isSubmitting?: boolean;

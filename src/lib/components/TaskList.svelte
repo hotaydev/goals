@@ -1,9 +1,8 @@
 <script lang="ts">
 	import type { Task } from '$lib/models/types';
-	import { calculatePriority, getPriorityLabel } from '$lib/services/priority';
-	import { formatTargetDate, targetDateToDate } from '$lib/services/date';
+	import { calculatePriority, getEffortLabel, getPriorityLabel } from '$lib/services/priority';
+	import { targetDateToDate } from '$lib/services/date';
 	import { modalStore } from '$lib/stores/modalStore';
-	import { Edit } from '@lucide/svelte';
 	import TimeRemaining from './TimeRemaining.svelte';
 
 	interface Props {
@@ -33,16 +32,6 @@
 	function handleTaskView(task: Task) {
 		modalStore.openTaskModal(task.id);
 	}
-
-	function handleTaskEdit(task: Task, event: Event) {
-		event.stopPropagation();
-		modalStore.openTaskModal(task.id, 'edit');
-	}
-
-	function truncateDescription(description: string, maxLength: number = 60): string {
-		if (description.length <= maxLength) return description;
-		return description.slice(0, maxLength).trim() + '...';
-	}
 </script>
 
 <div class="task-list">
@@ -54,6 +43,7 @@
 		{#each sortedTasks as task (task.id)}
 			{@const priority = calculatePriority(task.value, task.effort)}
 			{@const priorityLabel = getPriorityLabel(priority)}
+			{@const effortLabel = getEffortLabel(task.value, task.effort)}
 			<div
 				class="task-item priority-{priority}"
 				onclick={() => handleTaskView(task)}
@@ -66,32 +56,20 @@
 				{/if}
 
 				<div class="task-content">
+					<div class="priority-badge priority-{priority}" title={effortLabel}>
+						{priorityLabel}
+					</div>
 					<span class="task-title">{task.title}</span>
-					<span class="task-description">{truncateDescription(task.description, 60)}</span>
 				</div>
 
 				<div class="task-badges">
-					<div class="priority-badge priority-{priority}">
-						{priorityLabel}
-					</div>
 					<div class="status-badge status-{task.status}">
 						{task.status.replace('_', ' ')}
 					</div>
 				</div>
 
 				<div class="task-date">
-					<span class="date-value">{formatTargetDate(task.targetDate)}</span>
 					<TimeRemaining targetDate={task.targetDate} size="small" />
-				</div>
-
-				<div class="task-actions">
-					<button
-						class="action-button edit"
-						onclick={(event) => handleTaskEdit(task, event)}
-						title="Edit task"
-					>
-						<Edit size={12} />
-					</button>
 				</div>
 			</div>
 		{/each}
@@ -160,10 +138,6 @@
 		color: var(--color-text-primary);
 		font-size: 0.875rem;
 		font-weight: 600;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		max-width: 150px;
 	}
 
 	.task-description {
@@ -189,6 +163,7 @@
 		font-size: 0.625rem;
 		font-weight: 600;
 		text-transform: uppercase;
+		border-left: none;
 	}
 
 	.priority-badge.priority-5 {

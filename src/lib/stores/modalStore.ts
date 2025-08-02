@@ -6,14 +6,22 @@ export interface ModalState {
 	milestoneModalOpen: boolean;
 	taskModalOpen: boolean;
 	goalModalOpen: boolean;
+	goalCreationModalOpen: boolean;
+	deleteConfirmationModalOpen: boolean;
 	openMilestoneId?: string;
 	openTaskId?: string;
 	openGoalId?: string;
 	milestoneMode: ModalMode;
 	taskMode: ModalMode;
-	goalMode: ModalMode;
 	createTaskMilestoneId?: string; // For creating new tasks within a milestone
 	createMilestoneGoalId?: string; // For creating new milestones within a goal
+	deleteConfirmation?: {
+		title: string;
+		message: string;
+		itemName: string;
+		itemType: 'goal' | 'milestone' | 'task';
+		onConfirm: () => void;
+	};
 }
 
 function createModalStore() {
@@ -21,14 +29,16 @@ function createModalStore() {
 		milestoneModalOpen: false,
 		taskModalOpen: false,
 		goalModalOpen: false,
+		goalCreationModalOpen: false,
+		deleteConfirmationModalOpen: false,
 		openMilestoneId: undefined,
 		openTaskId: undefined,
 		openGoalId: undefined,
 		milestoneMode: 'view',
 		taskMode: 'view',
-		goalMode: 'view',
 		createTaskMilestoneId: undefined,
-		createMilestoneGoalId: undefined
+		createMilestoneGoalId: undefined,
+		deleteConfirmation: undefined
 	});
 
 	return {
@@ -75,7 +85,7 @@ function createModalStore() {
 				createMilestoneGoalId: undefined
 			}));
 		},
-		openGoalModal: (goalId: string, mode: ModalMode = 'view') => {
+		openGoalModal: (goalId: string) => {
 			update((state) => ({
 				...state,
 				milestoneModalOpen: false, // Close any open milestone modal
@@ -84,7 +94,6 @@ function createModalStore() {
 				openMilestoneId: undefined,
 				openTaskId: undefined,
 				openGoalId: goalId,
-				goalMode: mode,
 				createTaskMilestoneId: undefined,
 				createMilestoneGoalId: undefined
 			}));
@@ -115,12 +124,6 @@ function createModalStore() {
 				taskMode: mode
 			}));
 		},
-		setGoalMode: (mode: ModalMode) => {
-			update((state) => ({
-				...state,
-				goalMode: mode
-			}));
-		},
 		closeMilestoneModal: () => {
 			update((state) => ({
 				...state,
@@ -143,8 +146,53 @@ function createModalStore() {
 				...state,
 				goalModalOpen: false,
 				openGoalId: undefined,
-				goalMode: 'view',
 				createMilestoneGoalId: undefined
+			}));
+		},
+		openGoalCreationModal: () => {
+			update((state) => ({
+				...state,
+				milestoneModalOpen: false,
+				taskModalOpen: false,
+				goalModalOpen: false,
+				goalCreationModalOpen: true,
+				openMilestoneId: undefined,
+				openTaskId: undefined,
+				openGoalId: undefined,
+				createTaskMilestoneId: undefined,
+				createMilestoneGoalId: undefined
+			}));
+		},
+		closeGoalCreationModal: () => {
+			update((state) => ({
+				...state,
+				goalCreationModalOpen: false
+			}));
+		},
+		openDeleteConfirmationModal: (
+			title: string,
+			message: string,
+			itemName: string,
+			itemType: 'goal' | 'milestone' | 'task',
+			onConfirm: () => void
+		) => {
+			update((state) => ({
+				...state,
+				deleteConfirmationModalOpen: true,
+				deleteConfirmation: {
+					title,
+					message,
+					itemName,
+					itemType,
+					onConfirm
+				}
+			}));
+		},
+		closeDeleteConfirmationModal: () => {
+			update((state) => ({
+				...state,
+				deleteConfirmationModalOpen: false,
+				deleteConfirmation: undefined
 			}));
 		},
 		closeAllModals: () => {
@@ -152,14 +200,16 @@ function createModalStore() {
 				milestoneModalOpen: false,
 				taskModalOpen: false,
 				goalModalOpen: false,
+				goalCreationModalOpen: false,
+				deleteConfirmationModalOpen: false,
 				openMilestoneId: undefined,
 				openTaskId: undefined,
 				openGoalId: undefined,
 				milestoneMode: 'view',
 				taskMode: 'view',
-				goalMode: 'view',
 				createTaskMilestoneId: undefined,
-				createMilestoneGoalId: undefined
+				createMilestoneGoalId: undefined,
+				deleteConfirmation: undefined
 			});
 		}
 	};

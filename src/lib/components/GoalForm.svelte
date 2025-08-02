@@ -10,6 +10,7 @@
 		onSave: (data: GoalFormData) => void;
 		onCancel: () => void;
 		isSubmitting?: boolean;
+		isCreating?: boolean;
 	}
 
 	export interface GoalFormData {
@@ -28,7 +29,8 @@
 		targetDate,
 		onSave,
 		onCancel,
-		isSubmitting = false
+		isSubmitting = false,
+		isCreating = false
 	}: Props = $props();
 
 	let formData = $state<GoalFormData>({
@@ -192,7 +194,7 @@
 				Cancel
 			</button>
 			<button type="submit" class="button-primary" disabled={isSubmitting}>
-				{isSubmitting ? 'Saving...' : 'Save Changes'}
+				{isSubmitting ? 'Saving...' : isCreating ? 'Create Goal' : 'Save Changes'}
 			</button>
 		</div>
 	</form>
@@ -332,8 +334,8 @@
 	}
 
 	.button-primary:hover:not(:disabled) {
-		background-color: var(--color-primary-dark);
-		border-color: var(--color-primary-dark);
+		background-color: var(--color-primary-hover);
+		border-color: var(--color-primary-hover);
 	}
 
 	.button-primary:disabled {

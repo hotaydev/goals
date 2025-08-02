@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { ChevronDown, ChevronRight, Target, Edit } from '@lucide/svelte';
+	import { ChevronDown, ChevronRight, Target } from '@lucide/svelte';
 	import type { Milestone } from '$lib/models/types';
-	import { calculatePriority, getPriorityLabel } from '$lib/services/priority';
+	import { calculatePriority, getEffortLabel, getPriorityLabel } from '$lib/services/priority';
 	import { getMilestoneCompletionPercentage } from '$lib/services/percentage';
 	import ProgressBar from './ProgressBar.svelte';
 	import TaskList from './TaskList.svelte';
@@ -14,6 +14,7 @@
 
 	const priority = $derived(calculatePriority(milestone.value, milestone.effort));
 	const priorityLabel = $derived(getPriorityLabel(priority));
+	const effortLabel = $derived(getEffortLabel(milestone.value, milestone.effort));
 	const completionPercentage = $derived(getMilestoneCompletionPercentage(milestone.tasks));
 
 	function toggleExpanded() {
@@ -22,10 +23,6 @@
 
 	function openModal() {
 		modalStore.openMilestoneModal(milestone.id);
-	}
-
-	function openEditModal() {
-		modalStore.openMilestoneModal(milestone.id, 'edit');
 	}
 </script>
 
@@ -40,7 +37,7 @@
 					<div class="milestone-text">
 						<div class="milestone-meta">
 							<h3>{milestone.title}</h3>
-							<div class="priority-badge priority-{priority}">
+							<div class="priority-badge priority-{priority}" title={effortLabel}>
 								{priorityLabel}
 							</div>
 							<TimeRemaining targetDate={milestone.targetDate} size="medium" />
@@ -60,9 +57,6 @@
 		</button>
 
 		<div class="milestone-actions">
-			<button class="action-button" onclick={openEditModal} title="Edit milestone">
-				<Edit size={16} />
-			</button>
 			<button class="smart-button" onclick={openModal} title="View SMART objectives">
 				<Target size={16} />
 				Details
@@ -158,7 +152,7 @@
 	.milestone-meta {
 		display: flex;
 		align-items: center;
-		gap: var(--spacing-md);
+		gap: var(--spacing-sm);
 		flex-wrap: wrap;
 	}
 
@@ -294,7 +288,6 @@
 		.milestone-meta {
 			flex-direction: column;
 			align-items: flex-start;
-			gap: var(--spacing-xs);
 		}
 
 		.milestone-actions {

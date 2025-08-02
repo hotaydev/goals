@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { ArrowLeft, Edit, Trash2 } from '@lucide/svelte';
-	import type { Goal } from '$lib/models/types';
-	import { storageService } from '$lib/services/storage';
+	import { ArrowLeft, Edit, Trash2, Plus } from '@lucide/svelte';
+	import { goalsStore, goals, getGoal } from '$lib/stores/goalsStore';
 	import { modalStore } from '$lib/stores/modalStore';
 	import GoalHeader from '$lib/components/GoalHeader.svelte';
 	import SMARTSection from '$lib/components/SMARTSection.svelte';
@@ -12,10 +11,13 @@
 	import { calculatePriority } from '$lib/services/priority';
 	import { getMilestoneCompletionPercentage } from '$lib/services/percentage';
 
-	let goal = $state<Goal | null>(null);
-	let goals = $state<Goal[]>([]);
 	let loading = $state(true);
 	let error = $state<string | null>(null);
+	let goalId = $state<string>('');
+
+	// Get goal reactively from store
+	const goalStore = $derived(getGoal(goalId));
+	const goal = $derived($goalStore);
 
 	// Sort milestones by priority (highest first) then by completion percentage (Higher completion first - less work needed to complete)
 	const sortedMilestones = $derived(
@@ -36,47 +38,32 @@
 			: []
 	);
 
-	onMount(async () => {
+	onMount(() => {
 		try {
-			// Initialize storage with mock data if empty
-			storageService.init();
+			// Initialize the store
+			goalsStore.init();
 
-			const goalId = page.params?.goalId;
-			if (!goalId) {
+			const paramGoalId = page.params?.goalId;
+			if (!paramGoalId) {
 				error = 'Goal ID is required';
 				return;
 			}
 
-			// Load all goals for the ModalManager
-			goals = storageService.getGoals();
-			goal = storageService.getGoal(goalId);
-
-			if (!goal) {
-				error = 'Goal not found';
-			}
+			goalId = paramGoalId;
 		} catch (err) {
-			console.error('Failed to load goal:', err);
+			console.error('Failed to initialize goals store:', err);
 			error = 'Failed to load goal';
 		} finally {
 			loading = false;
 		}
 	});
 
-	// Reactively update data when storage changes (for real-time updates)
-	function refreshData() {
-		if (goal) {
-			const updatedGoal = storageService.getGoal(goal.id);
-			if (updatedGoal) {
-				goal = updatedGoal;
-			}
+	// Check if goal exists
+	$effect(() => {
+		if (!loading && goalId && !goal) {
+			error = 'Goal not found';
 		}
-		goals = storageService.getGoals();
-	}
-
-	// Listen for storage changes to update the UI
-	if (typeof window !== 'undefined') {
-		window.addEventListener('storage', refreshData);
-	}
+	});
 
 	function handleGoBack() {
 		window.location.href = '/';
@@ -90,8 +77,25 @@
 
 	function handleDeleteGoal() {
 		if (goal) {
-			// TODO: Implement goal deletion with confirmation
-			console.log('Delete goal:', goal.title);
+			const confirmMessage = `Are you sure you want to delete the goal "${goal.title}"? This action cannot be undone and will also delete all associated milestones and tasks.`;
+			modalStore.openDeleteConfirmationModal(
+				'Delete Goal',
+				confirmMessage,
+				goal.title,
+				'goal',
+				() => {
+					goalsStore.deleteGoal(goal.id);
+					modalStore.closeDeleteConfirmationModal();
+					// Navigate back to main page after deletion
+					window.location.href = '/';
+				}
+			);
+		}
+	}
+
+	function handleCreateMilestone() {
+		if (goal) {
+			modalStore.openCreateMilestoneModal(goal.id);
 		}
 	}
 </script>
@@ -139,17 +143,38 @@
 
 		<!-- Milestones Section -->
 		<div class="milestones-section">
-			<h2>Milestones</h2>
+			<div class="milestones-header">
+				<h2>Milestones</h2>
+				<button
+					class="btn btn-primary"
+					onclick={handleCreateMilestone}
+					title="Create new milestone"
+				>
+					<Plus size={16} />
+					New Milestone
+				</button>
+			</div>
 			<div class="milestones-list">
 				{#each sortedMilestones as milestone (milestone.id)}
 					<MilestoneCard {milestone} />
 				{/each}
+				{#if goal.milestones.length === 0}
+					<div class="empty-state">
+						<div class="empty-icon">🎯</div>
+						<h3>No milestones yet</h3>
+						<p>Create your first milestone to break down this goal into manageable steps.</p>
+						<button class="btn btn-primary" onclick={handleCreateMilestone}>
+							<Plus size={16} />
+							Create First Milestone
+						</button>
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>
 
 	<!-- Modal Manager -->
-	<ModalManager {goals} />
+	<ModalManager goals={$goals} />
 {/if}
 
 <style>
@@ -190,6 +215,13 @@
 		gap: var(--spacing-lg);
 	}
 
+	.milestones-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--spacing-md);
+	}
+
 	.milestones-section h2 {
 		margin: 0;
 		color: var(--color-text-primary);
@@ -221,6 +253,36 @@
 	.error-state p {
 		margin: 0;
 		color: var(--color-text-secondary);
+	}
+
+	.empty-state {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		padding: var(--spacing-2xl);
+		gap: var(--spacing-md);
+		background-color: var(--color-surface);
+		border-radius: var(--radius-lg);
+		border: 1px dashed var(--color-border);
+	}
+
+	.empty-icon {
+		font-size: 3rem;
+		margin-bottom: var(--spacing-sm);
+	}
+
+	.empty-state h3 {
+		margin: 0;
+		color: var(--color-text-primary);
+		font-size: 1.25rem;
+	}
+
+	.empty-state p {
+		margin: 0;
+		color: var(--color-text-secondary);
+		max-width: 400px;
 	}
 
 	.spinner {

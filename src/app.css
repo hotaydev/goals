@@ -31,6 +31,8 @@ html {
 	--color-success: #10b981;
 	--color-warning: #f59e0b;
 	--color-error: #ef4444;
+	--color-error-light: #fef2f2;
+	--color-error-dark: #dc2626;
 
 	/* Spacing */
 	--spacing-xs: 0.25rem;
@@ -73,6 +75,8 @@ html {
 	--color-success: #10b981;
 	--color-warning: #f59e0b;
 	--color-error: #ef4444;
+	--color-error-light: #7f1d1d;
+	--color-error-dark: #fca5a5;
 }
 
 /* Base Elements */
@@ -346,7 +350,8 @@ p {
 	box-shadow: var(--shadow-lg);
 	max-width: 95vw;
 	max-height: 95vh;
-	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
 	transform: scale(0.9);
 	transition: transform var(--transition-normal);
 }
@@ -387,7 +392,8 @@ p {
 }
 
 .modal-body {
-	padding: var(--spacing-md);
+	flex: 1;
+	min-height: 0;
 }
 
 @media (max-width: 768px) {
@@ -401,6 +407,7 @@ p {
 	}
 
 	.modal-body {
-		padding: var(--spacing-md);
+		flex: 1;
+		min-height: 0;
 	}
 }

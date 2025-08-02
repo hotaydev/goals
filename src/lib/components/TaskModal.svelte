@@ -1,14 +1,15 @@
 <script lang="ts">
-	import type { Task } from '$lib/models/types';
-	import { calculatePriority, getPriorityLabel } from '$lib/services/priority';
+	import type { Task, TaskStatus } from '$lib/models/types';
+	import { calculatePriority, getEffortLabel, getPriorityLabel } from '$lib/services/priority';
 	import { formatTargetDate } from '$lib/services/date';
-	import { storageService } from '$lib/services/storage';
+	import { goalsStore } from '$lib/stores/goalsStore';
 	import { modalStore, type ModalMode } from '$lib/stores/modalStore';
-	import { Edit } from '@lucide/svelte';
 	import Modal from './Modal.svelte';
-	import SMARTSectionCompact from './SMARTSectionCompact.svelte';
+	import SMARTSection from './SMARTSection.svelte';
 	import TaskForm, { type TaskFormData } from './TaskForm.svelte';
 	import TimeRemaining from './TimeRemaining.svelte';
+	import StatusDropdown from './StatusDropdown.svelte';
+	import ActionDropdown from './ActionDropdown.svelte';
 
 	interface Props {
 		task: Task | null;
@@ -24,12 +25,7 @@
 
 	const priority = $derived(task ? calculatePriority(task.value, task.effort) : 0);
 	const priorityLabel = $derived(task ? getPriorityLabel(priority) : '');
-
-	const statusLabels = {
-		planned: 'Planned',
-		in_progress: 'In Progress',
-		done: 'Done'
-	};
+	const effortLabel = $derived(task ? getEffortLabel(task.value, task.effort) : '');
 
 	// Default values for new tasks
 	const defaultTask = {
@@ -58,16 +54,16 @@
 			if (mode === 'create') {
 				if (!milestoneId) throw new Error('Milestone ID is required for creating tasks');
 
-				const goalLocation = storageService.findMilestoneLocation(milestoneId);
+				const goalLocation = goalsStore.findMilestoneLocation(milestoneId);
 				if (!goalLocation) throw new Error('Goal not found');
 
-				await storageService.createTask(goalLocation, milestoneId, {
+				goalsStore.addTask(goalLocation, milestoneId, {
 					...formData,
 					status: 'planned'
 				});
 				modalStore.closeTaskModal();
 			} else if (mode === 'edit' && task) {
-				const location = storageService.findTaskLocation(task.id);
+				const location = goalsStore.findTaskLocation(task.id);
 				if (!location) throw new Error('Task location not found');
 
 				const updatedTask: Task = {
@@ -83,7 +79,7 @@
 					updatedAt: new Date().toISOString()
 				};
 
-				storageService.updateTask(location.goalId, location.milestoneId, updatedTask);
+				goalsStore.updateTask(location.goalId, location.milestoneId, updatedTask);
 				modalStore.setTaskMode('view');
 			}
 		} catch (error) {
@@ -105,6 +101,30 @@
 	function handleEdit() {
 		modalStore.setTaskMode('edit');
 	}
+
+	function handleDelete() {
+		if (task) {
+			const location = goalsStore.findTaskLocation(task.id);
+			if (location) {
+				goalsStore.deleteTask(location.goalId, location.milestoneId, task.id);
+				modalStore.closeTaskModal();
+			}
+		}
+	}
+
+	function handleStatusChange(newStatus: TaskStatus) {
+		if (!task) return;
+
+		const location = goalsStore.findTaskLocation(task.id);
+		if (location) {
+			const updatedTask: Task = {
+				...task,
+				status: newStatus,
+				updatedAt: new Date().toISOString()
+			};
+			goalsStore.updateTask(location.goalId, location.milestoneId, updatedTask);
+		}
+	}
 </script>
 
 <Modal
@@ -124,7 +144,6 @@
 				targetDate={taskData.targetDate}
 				value={taskData.value}
 				effort={taskData.effort}
-				status={taskData.status}
 				onSave={handleSave}
 				onCancel={handleCancel}
 				{isSubmitting}
@@ -140,19 +159,25 @@
 					<div class="task-text">
 						<div class="task-title">
 							<h3>{task.title}</h3>
-							<div class="priority-badge priority-{priority}">
+							<div class="priority-badge priority-{priority}" title={effortLabel}>
 								{priorityLabel}
 							</div>
-							<div class="status-badge status-{task.status}">
-								{statusLabels[task.status]}
-							</div>
+							<StatusDropdown
+								status={task.status}
+								onStatusChange={handleStatusChange}
+								size="medium"
+							/>
 						</div>
 						<p class="task-description">{task.description}</p>
 					</div>
 					<div class="header-actions">
-						<button class="action-button" onclick={handleEdit} title="Edit task">
-							<Edit size={16} />
-						</button>
+						<ActionDropdown
+							onEdit={handleEdit}
+							onDelete={handleDelete}
+							deleteConfirmMessage={`Are you sure you want to delete the task "${task.title}"? This action cannot be undone.`}
+							itemName={task.title}
+							itemType="task"
+						/>
 					</div>
 				</div>
 
@@ -168,7 +193,7 @@
 			</div>
 
 			<!-- SMART Criteria Section -->
-			<SMARTSectionCompact smart={task.smart} />
+			<SMARTSection smart={task.smart} compact defaultExpanded={false} />
 		{:else}
 			<div class="error-state">
 				<p>Task not found</p>
@@ -184,6 +209,10 @@
 		gap: var(--spacing-md);
 		min-width: 600px;
 		max-width: 800px;
+		width: 100%;
+		max-height: 80vh;
+		overflow-y: auto;
+		padding: var(--spacing-lg);
 	}
 
 	.task-header-section {
@@ -243,8 +272,7 @@
 		flex-wrap: wrap;
 	}
 
-	.priority-badge,
-	.status-badge {
+	.priority-badge {
 		padding: var(--spacing-xs) var(--spacing-sm);
 		border-radius: var(--radius-md);
 		font-size: 0.75rem;
@@ -269,21 +297,6 @@
 
 	.priority-badge.priority-1 {
 		background-color: var(--color-error);
-		color: white;
-	}
-
-	.status-badge.status-planned {
-		background-color: var(--color-text-muted);
-		color: white;
-	}
-
-	.status-badge.status-in_progress {
-		background-color: var(--color-warning);
-		color: white;
-	}
-
-	.status-badge.status-done {
-		background-color: var(--color-success);
 		color: white;
 	}
 
@@ -343,6 +356,7 @@
 		.task-modal-content {
 			min-width: unset;
 			width: 100%;
+			padding: var(--spacing-md);
 		}
 
 		.task-header-section {

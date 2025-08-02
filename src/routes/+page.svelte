@@ -2,37 +2,26 @@
 	import { Plus } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import GoalCard from '$lib/components/GoalCard.svelte';
+	import ModalManager from '$lib/components/ModalManager.svelte';
 	import type { Goal } from '$lib/models/types';
-	import { storageService } from '$lib/services/storage';
+	import { goalsStore, goals } from '$lib/stores/goalsStore';
+	import { modalStore } from '$lib/stores/modalStore';
 
-	let goals = $state<Goal[]>([]);
 	let loading = $state(true);
 
-	onMount(async () => {
+	onMount(() => {
 		try {
-			// Initialize storage with mock data if empty
-			storageService.init();
-			goals = storageService.getGoals();
+			// Initialize the store
+			goalsStore.init();
 		} catch (error) {
-			console.error('Failed to load goals:', error);
+			console.error('Failed to initialize goals store:', error);
 		} finally {
 			loading = false;
 		}
 	});
 
-	// Reactively update data when storage changes
-	function refreshData() {
-		goals = storageService.getGoals();
-	}
-
-	// Listen for storage changes to update the UI
-	if (typeof window !== 'undefined') {
-		window.addEventListener('storage', refreshData);
-	}
-
 	function handleAddGoal() {
-		// TODO: Implement goal creation flow
-		console.log('Add new goal clicked');
+		modalStore.openGoalCreationModal();
 	}
 
 	function handleGoalClick(goal: Goal) {
@@ -61,7 +50,7 @@
 		<div class="loading-state">
 			<div class="spinner"></div>
 		</div>
-	{:else if goals.length === 0}
+	{:else if $goals.length === 0}
 		<div class="empty-state">
 			<div class="empty-icon">🎯</div>
 			<h3>No goals yet</h3>
@@ -73,12 +62,15 @@
 		</div>
 	{:else}
 		<div class="goals-grid">
-			{#each goals as goal (goal.id)}
+			{#each $goals as goal (goal.id)}
 				<GoalCard {goal} onclick={() => handleGoalClick(goal)} />
 			{/each}
 		</div>
 	{/if}
 </div>
+
+<!-- Modal Manager -->
+<ModalManager goals={$goals} />
 
 <style>
 	.page-container {

@@ -1,17 +1,18 @@
 <script lang="ts">
 	import type { Milestone, SMARTCriteria, TargetDate, ValueEffortLevel } from '$lib/models/types';
-	import { calculatePriority, getPriorityLabel } from '$lib/services/priority';
+	import { calculatePriority, getEffortLabel, getPriorityLabel } from '$lib/services/priority';
 	import { getMilestoneCompletionPercentage } from '$lib/services/percentage';
 	import { formatTargetDate } from '$lib/services/date';
-	import { storageService } from '$lib/services/storage';
+	import { goalsStore } from '$lib/stores/goalsStore';
 	import { modalStore, type ModalMode } from '$lib/stores/modalStore';
-	import { Edit, Plus } from '@lucide/svelte';
+	import { Plus } from '@lucide/svelte';
 	import Modal from './Modal.svelte';
-	import SMARTSectionCompact from './SMARTSectionCompact.svelte';
+	import SMARTSection from './SMARTSection.svelte';
 	import ProgressBar from './ProgressBar.svelte';
 	import TaskList from './TaskList.svelte';
 	import EditableForm from './EditableForm.svelte';
 	import TimeRemaining from './TimeRemaining.svelte';
+	import ActionDropdown from './ActionDropdown.svelte';
 
 	interface Props {
 		milestone: Milestone | null;
@@ -37,6 +38,7 @@
 
 	const priority = $derived(milestone ? calculatePriority(milestone.value, milestone.effort) : 0);
 	const priorityLabel = $derived(milestone ? getPriorityLabel(priority) : '');
+	const effortLabel = $derived(milestone ? getEffortLabel(milestone.value, milestone.effort) : '');
 	const completionPercentage = $derived(
 		milestone ? getMilestoneCompletionPercentage(milestone.tasks) : 0
 	);
@@ -67,10 +69,10 @@
 			if (mode === 'create') {
 				if (!goalId) throw new Error('Goal ID is required for creating milestones');
 
-				await storageService.createMilestone(goalId, formData);
+				goalsStore.addMilestone(goalId, formData);
 				modalStore.closeMilestoneModal();
 			} else if (mode === 'edit' && milestone) {
-				const milestoneGoalId = storageService.findMilestoneLocation(milestone.id);
+				const milestoneGoalId = goalsStore.findMilestoneLocation(milestone.id);
 				if (!milestoneGoalId) throw new Error('Goal not found');
 
 				const updatedMilestone: Milestone = {
@@ -85,7 +87,7 @@
 					updatedAt: new Date().toISOString()
 				};
 
-				storageService.updateMilestone(milestoneGoalId, updatedMilestone);
+				goalsStore.updateMilestone(milestoneGoalId, updatedMilestone);
 				modalStore.setMilestoneMode('view');
 			}
 		} catch (error) {
@@ -106,6 +108,16 @@
 
 	function handleEdit() {
 		modalStore.setMilestoneMode('edit');
+	}
+
+	function handleDelete() {
+		if (milestone) {
+			const goalId = goalsStore.findMilestoneLocation(milestone.id);
+			if (goalId) {
+				goalsStore.deleteMilestone(goalId, milestone.id);
+				modalStore.closeMilestoneModal();
+			}
+		}
 	}
 
 	function handleCreateTask() {
@@ -151,16 +163,20 @@
 					<div class="milestone-text">
 						<div class="milestone-title">
 							<h3>{milestone.title}</h3>
-							<span class="priority-badge priority-{priority}">
+							<span class="priority-badge priority-{priority}" title={effortLabel}>
 								{priorityLabel}
 							</span>
 						</div>
 						<p class="milestone-description">{milestone.description}</p>
 					</div>
 					<div class="header-actions">
-						<button class="action-button" onclick={handleEdit} title="Edit milestone">
-							<Edit size={16} />
-						</button>
+						<ActionDropdown
+							onEdit={handleEdit}
+							onDelete={handleDelete}
+							deleteConfirmMessage={`Are you sure you want to delete the milestone "${milestone.title}"? This will also delete all associated tasks and cannot be undone.`}
+							itemName={milestone.title}
+							itemType="milestone"
+						/>
 					</div>
 				</div>
 
@@ -177,7 +193,7 @@
 			</div>
 
 			<!-- SMART Criteria Section -->
-			<SMARTSectionCompact smart={milestone.smart} />
+			<SMARTSection smart={milestone.smart} compact defaultExpanded={false} />
 
 			<!-- Tasks Section -->
 			<div class="tasks-section">
@@ -205,6 +221,10 @@
 		gap: var(--spacing-md);
 		min-width: 700px;
 		max-width: 1000px;
+		width: 100%;
+		max-height: 80vh;
+		overflow-y: auto;
+		padding: var(--spacing-lg);
 	}
 
 	.milestone-header-section {
@@ -345,8 +365,8 @@
 	}
 
 	.action-button.primary:hover {
-		background-color: var(--color-primary-dark);
-		border-color: var(--color-primary-dark);
+		background-color: var(--color-primary-hover);
+		border-color: var(--color-primary-hover);
 		color: white;
 	}
 
@@ -354,6 +374,7 @@
 		.milestone-modal-content {
 			min-width: unset;
 			width: 100%;
+			padding: var(--spacing-md);
 		}
 
 		.milestone-header-section {
