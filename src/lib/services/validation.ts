@@ -1,4 +1,3 @@
-import type { StorageData } from '../stores/goalsStore';
 import type { Goal, TaskStatus, ValueEffortLevel } from '../models/types';
 
 export interface ValidationResult {
@@ -7,7 +6,7 @@ export interface ValidationResult {
 }
 
 export interface ImportValidationResult extends ValidationResult {
-	data?: StorageData;
+	data?: Goal[];
 }
 
 // Shared constants
@@ -387,36 +386,19 @@ function validateGoal(goal: unknown, prefix: string): string[] {
 export function validateImportData(jsonData: unknown): ImportValidationResult {
 	const errors: string[] = [];
 
-	// Check if data is an object
-	if (!isObject(jsonData)) {
-		return {
-			isValid: false,
-			errors: ['Data must be a valid JSON object']
-		};
-	}
-
 	// Check if goals array exists
-	if (!isArray(jsonData.goals)) {
+	if (!isArray(jsonData)) {
 		return {
 			isValid: false,
-			errors: ['Data must contain a "goals" array']
+			errors: ['Data must be a "goals" array']
 		};
-	}
-
-	// Check if lastUpdated exists and is valid
-	if (jsonData.lastUpdated !== undefined) {
-		const dateError = isValidDateString(jsonData.lastUpdated, 'lastUpdated');
-		if (dateError) errors.push(dateError);
 	}
 
 	// Validate each goal
-	errors.push(...validateArray(jsonData.goals, validateGoal, 'goals'));
+	errors.push(...validateArray(jsonData, validateGoal, 'goals'));
 
 	// If no lastUpdated, add current timestamp
-	const validatedData: StorageData = {
-		goals: jsonData.goals as Goal[],
-		lastUpdated: (jsonData.lastUpdated as string) || new Date().toISOString()
-	};
+	const validatedData: Goal[] = jsonData as Goal[];
 
 	return {
 		isValid: errors.length === 0,
@@ -429,5 +411,5 @@ export function validateImportData(jsonData: unknown): ImportValidationResult {
  * Quick validation to check if JSON has basic structure (for file type checking)
  */
 export function hasBasicStructure(jsonData: unknown): boolean {
-	return isObject(jsonData) && isArray(jsonData.goals);
+	return isArray(jsonData);
 }

@@ -32,20 +32,6 @@
 </script>
 
 <div class="page-container">
-	<!-- Page Header -->
-	<div class="page-header">
-		<div class="header-content">
-			<h1>My Goals</h1>
-			<p>
-				Track your long-term goals with SMART methodology and value vs effort matrix prioritization
-			</p>
-		</div>
-		<button class="btn btn-primary" onclick={handleAddGoal}>
-			<Plus size={20} />
-			Add New Goal
-		</button>
-	</div>
-
 	<!-- Goals Grid -->
 	{#if loading}
 		<div class="loading-state">
@@ -62,6 +48,20 @@
 			</button>
 		</div>
 	{:else}
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="header-content">
+				<h1>My Goals</h1>
+				<p>
+					Track your long-term goals with SMART methodology and value vs effort matrix
+					prioritization
+				</p>
+			</div>
+			<button class="btn btn-primary" onclick={handleAddGoal}>
+				<Plus size={20} />
+				Add New Goal
+			</button>
+		</div>
 		<div class="goals-grid">
 			{#each $goals as goal (goal.id)}
 				<GoalCard {goal} onclick={() => handleGoalClick(goal)} />
@@ -114,6 +114,7 @@
 		text-align: center;
 		padding: var(--spacing-2xl);
 		gap: var(--spacing-md);
+		margin-top: calc(var(--spacing-2xl) * 2);
 	}
 
 	.empty-icon {

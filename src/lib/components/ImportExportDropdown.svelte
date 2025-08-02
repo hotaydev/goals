@@ -71,12 +71,9 @@
 
 				if (hasExistingGoals) {
 					// Count items in the import data
-					const goalsCount = importData.goals.length;
-					const milestonesCount = importData.goals.reduce(
-						(sum, goal) => sum + goal.milestones.length,
-						0
-					);
-					const tasksCount = importData.goals.reduce(
+					const goalsCount = importData.length;
+					const milestonesCount = importData.reduce((sum, goal) => sum + goal.milestones.length, 0);
+					const tasksCount = importData.reduce(
 						(sum, goal) =>
 							sum + goal.milestones.reduce((mSum, milestone) => mSum + milestone.tasks.length, 0),
 						0

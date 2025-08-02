@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Evidence, Goal, Milestone, Task } from '$lib/models/types';
-	import type { StorageData } from '$lib/stores/goalsStore';
 	import { goalsStore } from '$lib/stores/goalsStore';
 	import { modalStore } from '$lib/stores/modalStore';
 	import Modal from './Modal.svelte';
@@ -32,35 +31,31 @@
 		if (context.type === 'task' && context.taskId && context.milestoneId) {
 			const taskLocation = goalsStore.findTaskLocation(context.taskId);
 			if (taskLocation) {
-				let currentData: StorageData | undefined;
+				let currentData: Goal[];
 				const unsubscribe = goalsStore.subscribe((data) => {
 					currentData = data;
 				});
 				unsubscribe();
 
-				if (currentData) {
-					const goal = currentData.goals.find((g: Goal) => g.id === taskLocation.goalId);
-					const milestone = goal?.milestones.find(
-						(m: Milestone) => m.id === taskLocation.milestoneId
-					);
-					const task = milestone?.tasks.find((t: Task) => t.id === context.taskId);
-					return task?.evidences?.find((e: Evidence) => e.id === context.editingEvidenceId) || null;
-				}
+				const goal = currentData!.find((g: Goal) => g.id === taskLocation.goalId);
+				const milestone = goal?.milestones.find(
+					(m: Milestone) => m.id === taskLocation.milestoneId
+				);
+				const task = milestone?.tasks.find((t: Task) => t.id === context.taskId);
+				return task?.evidences?.find((e: Evidence) => e.id === context.editingEvidenceId) || null;
 			}
 		} else if (context.type === 'milestone' && context.milestoneId) {
-			let currentData: StorageData | undefined;
+			let currentData: Goal[];
 			const unsubscribe = goalsStore.subscribe((data) => {
 				currentData = data;
 			});
 			unsubscribe();
 
-			if (currentData) {
-				const goal = currentData.goals.find((g: Goal) => g.id === context.goalId);
-				const milestone = goal?.milestones.find((m: Milestone) => m.id === context.milestoneId);
-				return (
-					milestone?.evidences?.find((e: Evidence) => e.id === context.editingEvidenceId) || null
-				);
-			}
+			const goal = currentData!.find((g: Goal) => g.id === context.goalId);
+			const milestone = goal?.milestones.find((m: Milestone) => m.id === context.milestoneId);
+			return (
+				milestone?.evidences?.find((e: Evidence) => e.id === context.editingEvidenceId) || null
+			);
 		}
 
 		return null;
