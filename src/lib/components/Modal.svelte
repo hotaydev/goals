@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { X } from '@lucide/svelte';
 	import type { Snippet } from 'svelte';
+	import { Confetti } from 'svelte-confetti';
 
 	interface Props {
 		isOpen: boolean;
 		onClose: () => void;
 		title?: string;
+		showConfetti?: boolean;
 		children: Snippet;
 	}
 
-	let { isOpen = false, onClose, title, children }: Props = $props();
+	let { isOpen = false, onClose, title, showConfetti, children }: Props = $props();
 
 	function handleOverlayClick(event: MouseEvent) {
 		if (event.target === event.currentTarget) {
@@ -44,9 +46,25 @@
 					</button>
 				</div>
 			{/if}
+			{#if showConfetti}
+				<div class="confetti-container">
+					<Confetti x={[-0.5, 0.5]} />
+					<Confetti amount={15} x={[-0.75, -0.3]} y={[0.15, 0.75]} />
+					<Confetti amount={15} x={[0.3, 0.75]} y={[0.15, 0.75]} />
+				</div>
+			{/if}
 			<div class="modal-body">
 				{@render children()}
 			</div>
 		</div>
 	</div>
 {/if}
+
+<style>
+	.confetti-container {
+		width: 80%;
+		display: flex;
+		justify-content: end;
+		z-index: 1000;
+	}
+</style>

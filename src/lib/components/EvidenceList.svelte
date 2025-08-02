@@ -63,7 +63,7 @@
 	{#if isExpanded}
 		{#if evidences.length === 0}
 			<div class="empty-state">
-				<p>No evidences or notes yet. Add some to track your progress and important links.</p>
+				<p>No evidences or notes yet. Add some to track your progress.</p>
 			</div>
 		{:else}
 			<div class="evidences-list">

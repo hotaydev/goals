@@ -23,6 +23,7 @@
 	let { task, isOpen, mode, milestoneId, onClose }: Props = $props();
 
 	let isSubmitting = $state(false);
+	let showConfetti = $state(false);
 
 	const priority = $derived(task ? calculatePriority(task.value, task.effort) : 0);
 	const priorityLabel = $derived(task ? getPriorityLabel(priority) : '');
@@ -125,6 +126,12 @@
 				updatedAt: new Date().toISOString()
 			};
 			goalsStore.updateTask(location.goalId, location.milestoneId, updatedTask);
+			if (newStatus === 'done') {
+				showConfetti = true;
+				setTimeout(() => {
+					showConfetti = false;
+				}, 3000);
+			}
 		}
 	}
 
@@ -168,6 +175,7 @@
 	{isOpen}
 	{onClose}
 	title={mode === 'create' ? 'Create New Task' : mode === 'edit' ? 'Edit Task' : 'Task Details'}
+	{showConfetti}
 >
 	<div class="task-modal-content">
 		{#if mode === 'edit' || mode === 'create'}

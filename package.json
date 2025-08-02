@@ -37,6 +37,6 @@
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.534.0",
-		"svelte-french-toast": "^2.0.0-alpha.0"
+		"svelte-confetti": "^2.3.2"
 	}
 }

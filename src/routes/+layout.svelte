@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import { Target } from '@lucide/svelte';
+	import { Target, CheckSquare } from '@lucide/svelte';
 	import ThemeSwitcher from '$lib/components/ThemeSwitcher.svelte';
 	import ImportExportDropdown from '$lib/components/ImportExportDropdown.svelte';
 
@@ -19,6 +19,9 @@
 
 			<!-- Controls -->
 			<div class="controls">
+				<a href="/tasks" class="btn btn-icon">
+					<CheckSquare size={20} />
+				</a>
 				<ImportExportDropdown />
 				<ThemeSwitcher />
 			</div>

@@ -24,3 +24,4 @@ export { default as TaskForm } from './TaskForm.svelte';
 export { default as EvidenceList } from './EvidenceList.svelte';
 export { default as EvidenceForm } from './EvidenceForm.svelte';
 export { default as EvidenceModal } from './EvidenceModal.svelte';
+export { default as EmojiSelector } from './EmojiSelector.svelte';

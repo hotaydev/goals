@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { SMARTCriteria, TargetDate } from '$lib/models/types';
+	import EmojiSelector from './EmojiSelector.svelte';
 
 	interface Props {
 		title: string;
@@ -111,13 +112,10 @@
 
 				<div class="form-group">
 					<label for="icon">Icon (emoji)</label>
-					<input
-						id="icon"
-						type="text"
-						bind:value={formData.icon}
+					<EmojiSelector
+						value={formData.icon}
+						onChange={(emoji) => (formData.icon = emoji)}
 						disabled={isSubmitting}
-						placeholder="🎯"
-						maxlength="2"
 					/>
 				</div>
 			</div>

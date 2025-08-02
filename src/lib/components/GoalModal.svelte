@@ -67,8 +67,6 @@
 		min-width: 700px;
 		max-width: 1000px;
 		width: 100%;
-		max-height: 80vh;
-		overflow-y: auto;
 		padding: var(--spacing-lg);
 	}
 

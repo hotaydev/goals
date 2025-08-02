@@ -339,6 +339,7 @@
 		font-weight: 600;
 		text-transform: uppercase;
 		align-self: flex-start;
+		border-left: none;
 	}
 
 	.priority-badge.priority-5 {
