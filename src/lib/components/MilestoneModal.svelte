@@ -1,5 +1,11 @@
 <script lang="ts">
-	import type { Milestone, SMARTCriteria, TargetDate, ValueEffortLevel } from '$lib/models/types';
+	import type {
+		Milestone,
+		SMARTCriteria,
+		TargetDate,
+		ValueEffortLevel,
+		Evidence
+	} from '$lib/models/types';
 	import { calculatePriority, getEffortLabel, getPriorityLabel } from '$lib/services/priority';
 	import { getMilestoneCompletionPercentage } from '$lib/services/percentage';
 	import { formatTargetDate } from '$lib/services/date';
@@ -13,6 +19,7 @@
 	import EditableForm from './EditableForm.svelte';
 	import TimeRemaining from './TimeRemaining.svelte';
 	import ActionDropdown from './ActionDropdown.svelte';
+	import EvidenceList from './EvidenceList.svelte';
 
 	interface Props {
 		milestone: Milestone | null;
@@ -69,7 +76,10 @@
 			if (mode === 'create') {
 				if (!goalId) throw new Error('Goal ID is required for creating milestones');
 
-				goalsStore.addMilestone(goalId, formData);
+				goalsStore.addMilestone(goalId, {
+					...formData,
+					evidences: []
+				});
 				modalStore.closeMilestoneModal();
 			} else if (mode === 'edit' && milestone) {
 				const milestoneGoalId = goalsStore.findMilestoneLocation(milestone.id);
@@ -123,6 +133,39 @@
 	function handleCreateTask() {
 		if (milestone) {
 			modalStore.openCreateTaskModal(milestone.id);
+		}
+	}
+
+	function handleAddEvidence() {
+		if (!milestone) return;
+		const goalId = goalsStore.findMilestoneLocation(milestone.id);
+		if (goalId) {
+			modalStore.openEvidenceModal({
+				type: 'milestone',
+				goalId: goalId,
+				milestoneId: milestone.id
+			});
+		}
+	}
+
+	function handleEditEvidence(evidence: Evidence) {
+		if (!milestone) return;
+		const goalId = goalsStore.findMilestoneLocation(milestone.id);
+		if (goalId) {
+			modalStore.openEvidenceModal({
+				type: 'milestone',
+				goalId: goalId,
+				milestoneId: milestone.id,
+				editingEvidenceId: evidence.id
+			});
+		}
+	}
+
+	function handleDeleteEvidence(evidenceId: string) {
+		if (!milestone) return;
+		const goalId = goalsStore.findMilestoneLocation(milestone.id);
+		if (goalId) {
+			goalsStore.deleteMilestoneEvidence(goalId, milestone.id, evidenceId);
 		}
 	}
 </script>
@@ -206,6 +249,14 @@
 				</div>
 				<TaskList tasks={milestone.tasks} />
 			</div>
+
+			<!-- Evidences Section -->
+			<EvidenceList
+				evidences={milestone.evidences || []}
+				onAdd={handleAddEvidence}
+				onEdit={handleEditEvidence}
+				onDelete={handleDeleteEvidence}
+			/>
 		{:else}
 			<div class="error-state">
 				<p>Milestone not found</p>
@@ -222,8 +273,6 @@
 		min-width: 700px;
 		max-width: 1000px;
 		width: 100%;
-		max-height: 80vh;
-		overflow-y: auto;
 		padding: var(--spacing-lg);
 	}
 

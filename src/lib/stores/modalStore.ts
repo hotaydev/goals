@@ -8,6 +8,8 @@ export interface ModalState {
 	goalModalOpen: boolean;
 	goalCreationModalOpen: boolean;
 	deleteConfirmationModalOpen: boolean;
+	importConfirmationModalOpen: boolean;
+	evidenceModalOpen: boolean;
 	openMilestoneId?: string;
 	openTaskId?: string;
 	openGoalId?: string;
@@ -15,12 +17,28 @@ export interface ModalState {
 	taskMode: ModalMode;
 	createTaskMilestoneId?: string; // For creating new tasks within a milestone
 	createMilestoneGoalId?: string; // For creating new milestones within a goal
+	evidenceContext?: {
+		type: 'task' | 'milestone';
+		goalId: string;
+		milestoneId?: string;
+		taskId?: string;
+		editingEvidenceId?: string;
+	};
 	deleteConfirmation?: {
 		title: string;
 		message: string;
 		itemName: string;
 		itemType: 'goal' | 'milestone' | 'task';
 		onConfirm: () => void;
+	};
+	importConfirmation?: {
+		title: string;
+		message: string;
+		goalsCount: number;
+		milestonesCount: number;
+		tasksCount: number;
+		onConfirm: () => void;
+		onCancel: () => void;
 	};
 }
 
@@ -31,6 +49,8 @@ function createModalStore() {
 		goalModalOpen: false,
 		goalCreationModalOpen: false,
 		deleteConfirmationModalOpen: false,
+		importConfirmationModalOpen: false,
+		evidenceModalOpen: false,
 		openMilestoneId: undefined,
 		openTaskId: undefined,
 		openGoalId: undefined,
@@ -38,7 +58,9 @@ function createModalStore() {
 		taskMode: 'view',
 		createTaskMilestoneId: undefined,
 		createMilestoneGoalId: undefined,
-		deleteConfirmation: undefined
+		deleteConfirmation: undefined,
+		importConfirmation: undefined,
+		evidenceContext: undefined
 	});
 
 	return {
@@ -195,6 +217,56 @@ function createModalStore() {
 				deleteConfirmation: undefined
 			}));
 		},
+		openImportConfirmationModal: (
+			title: string,
+			message: string,
+			goalsCount: number,
+			milestonesCount: number,
+			tasksCount: number,
+			onConfirm: () => void,
+			onCancel: () => void
+		) => {
+			update((state) => ({
+				...state,
+				importConfirmationModalOpen: true,
+				importConfirmation: {
+					title,
+					message,
+					goalsCount,
+					milestonesCount,
+					tasksCount,
+					onConfirm,
+					onCancel
+				}
+			}));
+		},
+		closeImportConfirmationModal: () => {
+			update((state) => ({
+				...state,
+				importConfirmationModalOpen: false,
+				importConfirmation: undefined
+			}));
+		},
+		openEvidenceModal: (context: {
+			type: 'task' | 'milestone';
+			goalId: string;
+			milestoneId?: string;
+			taskId?: string;
+			editingEvidenceId?: string;
+		}) => {
+			update((state) => ({
+				...state,
+				evidenceModalOpen: true,
+				evidenceContext: context
+			}));
+		},
+		closeEvidenceModal: () => {
+			update((state) => ({
+				...state,
+				evidenceModalOpen: false,
+				evidenceContext: undefined
+			}));
+		},
 		closeAllModals: () => {
 			set({
 				milestoneModalOpen: false,
@@ -202,6 +274,8 @@ function createModalStore() {
 				goalModalOpen: false,
 				goalCreationModalOpen: false,
 				deleteConfirmationModalOpen: false,
+				importConfirmationModalOpen: false,
+				evidenceModalOpen: false,
 				openMilestoneId: undefined,
 				openTaskId: undefined,
 				openGoalId: undefined,
@@ -209,7 +283,9 @@ function createModalStore() {
 				taskMode: 'view',
 				createTaskMilestoneId: undefined,
 				createMilestoneGoalId: undefined,
-				deleteConfirmation: undefined
+				deleteConfirmation: undefined,
+				importConfirmation: undefined,
+				evidenceContext: undefined
 			});
 		}
 	};

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Plus } from '@lucide/svelte';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import GoalCard from '$lib/components/GoalCard.svelte';
 	import ModalManager from '$lib/components/ModalManager.svelte';
 	import type { Goal } from '$lib/models/types';
@@ -26,7 +27,7 @@
 
 	function handleGoalClick(goal: Goal) {
 		// Navigate to goal detail page
-		window.location.href = `/goal/${goal.id}`;
+		goto(`/goal/${goal.id}`);
 	}
 </script>
 

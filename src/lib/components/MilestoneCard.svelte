@@ -162,6 +162,7 @@
 		font-size: 0.75rem;
 		font-weight: 600;
 		text-transform: uppercase;
+		border-left: none;
 	}
 
 	.priority-badge.priority-5 {

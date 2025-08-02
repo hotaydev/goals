@@ -30,9 +30,13 @@ html {
 	--color-text-inverse: #ffffff;
 	--color-success: #10b981;
 	--color-warning: #f59e0b;
+	--color-warning-light: #fef3c7;
+	--color-warning-dark: #d97706;
 	--color-error: #ef4444;
 	--color-error-light: #fef2f2;
 	--color-error-dark: #dc2626;
+	--color-primary-light: #dbeafe;
+	--color-primary-dark: #1d4ed8;
 
 	/* Spacing */
 	--spacing-xs: 0.25rem;
@@ -74,9 +78,13 @@ html {
 	--color-text-inverse: #0f172a;
 	--color-success: #10b981;
 	--color-warning: #f59e0b;
+	--color-warning-light: #451a03;
+	--color-warning-dark: #fbbf24;
 	--color-error: #ef4444;
 	--color-error-light: #7f1d1d;
 	--color-error-dark: #fca5a5;
+	--color-primary-light: #1e3a8a;
+	--color-primary-dark: #60a5fa;
 }
 
 /* Base Elements */
@@ -249,6 +257,12 @@ p {
 	color: var(--color-primary);
 }
 
+.controls {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-sm);
+}
+
 /* Main Content */
 .main-content {
 	min-height: calc(100vh - 80px);
@@ -349,7 +363,7 @@ p {
 	border-radius: var(--radius-lg);
 	box-shadow: var(--shadow-lg);
 	max-width: 95vw;
-	max-height: 95vh;
+	max-height: 90vh;
 	display: flex;
 	flex-direction: column;
 	transform: scale(0.9);
@@ -394,6 +408,9 @@ p {
 .modal-body {
 	flex: 1;
 	min-height: 0;
+	overflow-y: auto;
+	overflow-x: hidden;
+	max-height: calc(90vh - 80px); /* Account for header height */
 }
 
 @media (max-width: 768px) {
@@ -409,5 +426,8 @@ p {
 	.modal-body {
 		flex: 1;
 		min-height: 0;
+		overflow-y: auto;
+		overflow-x: hidden;
+		max-height: calc(90vh - 80px); /* Account for header height */
 	}
 }

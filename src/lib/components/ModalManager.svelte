@@ -5,6 +5,8 @@
 	import GoalModal from './GoalModal.svelte';
 	import GoalCreationModal from './GoalCreationModal.svelte';
 	import DeleteConfirmationModal from './DeleteConfirmationModal.svelte';
+	import ImportConfirmationModal from './ImportConfirmationModal.svelte';
+	import EvidenceModal from './EvidenceModal.svelte';
 	import type { Goal } from '$lib/models/types';
 
 	interface Props {
@@ -94,5 +96,26 @@
 		itemType={$modalStore.deleteConfirmation.itemType}
 		onConfirm={$modalStore.deleteConfirmation.onConfirm}
 		onCancel={() => modalStore.closeDeleteConfirmationModal()}
+	/>
+{/if}
+
+{#if $modalStore.importConfirmationModalOpen && $modalStore.importConfirmation}
+	<ImportConfirmationModal
+		isOpen={true}
+		title={$modalStore.importConfirmation.title}
+		message={$modalStore.importConfirmation.message}
+		goalsCount={$modalStore.importConfirmation.goalsCount}
+		milestonesCount={$modalStore.importConfirmation.milestonesCount}
+		tasksCount={$modalStore.importConfirmation.tasksCount}
+		onConfirm={$modalStore.importConfirmation.onConfirm}
+		onCancel={$modalStore.importConfirmation.onCancel}
+	/>
+{/if}
+
+{#if $modalStore.evidenceModalOpen}
+	<EvidenceModal
+		isOpen={true}
+		context={$modalStore.evidenceContext}
+		onClose={() => modalStore.closeEvidenceModal()}
 	/>
 {/if}

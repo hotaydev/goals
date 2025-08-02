@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Task, TaskStatus } from '$lib/models/types';
+	import type { Task, TaskStatus, Evidence } from '$lib/models/types';
 	import { calculatePriority, getEffortLabel, getPriorityLabel } from '$lib/services/priority';
 	import { formatTargetDate } from '$lib/services/date';
 	import { goalsStore } from '$lib/stores/goalsStore';
@@ -10,6 +10,7 @@
 	import TimeRemaining from './TimeRemaining.svelte';
 	import StatusDropdown from './StatusDropdown.svelte';
 	import ActionDropdown from './ActionDropdown.svelte';
+	import EvidenceList from './EvidenceList.svelte';
 
 	interface Props {
 		task: Task | null;
@@ -59,7 +60,8 @@
 
 				goalsStore.addTask(goalLocation, milestoneId, {
 					...formData,
-					status: 'planned'
+					status: 'planned',
+					evidences: []
 				});
 				modalStore.closeTaskModal();
 			} else if (mode === 'edit' && task) {
@@ -123,6 +125,41 @@
 				updatedAt: new Date().toISOString()
 			};
 			goalsStore.updateTask(location.goalId, location.milestoneId, updatedTask);
+		}
+	}
+
+	function handleAddEvidence() {
+		if (!task) return;
+		const location = goalsStore.findTaskLocation(task.id);
+		if (location) {
+			modalStore.openEvidenceModal({
+				type: 'task',
+				goalId: location.goalId,
+				milestoneId: location.milestoneId,
+				taskId: task.id
+			});
+		}
+	}
+
+	function handleEditEvidence(evidence: Evidence) {
+		if (!task) return;
+		const location = goalsStore.findTaskLocation(task.id);
+		if (location) {
+			modalStore.openEvidenceModal({
+				type: 'task',
+				goalId: location.goalId,
+				milestoneId: location.milestoneId,
+				taskId: task.id,
+				editingEvidenceId: evidence.id
+			});
+		}
+	}
+
+	function handleDeleteEvidence(evidenceId: string) {
+		if (!task) return;
+		const location = goalsStore.findTaskLocation(task.id);
+		if (location) {
+			goalsStore.deleteTaskEvidence(location.goalId, location.milestoneId, task.id, evidenceId);
 		}
 	}
 </script>
@@ -194,6 +231,14 @@
 
 			<!-- SMART Criteria Section -->
 			<SMARTSection smart={task.smart} compact defaultExpanded={false} />
+
+			<!-- Evidences Section -->
+			<EvidenceList
+				evidences={task.evidences || []}
+				onAdd={handleAddEvidence}
+				onEdit={handleEditEvidence}
+				onDelete={handleDeleteEvidence}
+			/>
 		{:else}
 			<div class="error-state">
 				<p>Task not found</p>
@@ -210,8 +255,6 @@
 		min-width: 600px;
 		max-width: 800px;
 		width: 100%;
-		max-height: 80vh;
-		overflow-y: auto;
 		padding: var(--spacing-lg);
 	}
 

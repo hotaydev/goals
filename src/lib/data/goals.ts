@@ -39,6 +39,7 @@ export const mockGoals: Goal[] = [
 					year: 2025,
 					month: 6
 				},
+				evidences: [],
 				tasks: [
 					{
 						id: '1-1-1',
@@ -60,8 +61,9 @@ export const mockGoals: Goal[] = [
 							month: 3,
 							day: 15
 						},
-						createdAt: new Date('2024-01-15'),
-						updatedAt: new Date('2024-03-15')
+						evidences: [],
+						createdAt: new Date('2024-01-15').toISOString(),
+						updatedAt: new Date('2024-03-15').toISOString()
 					},
 					{
 						id: '1-1-2',
@@ -83,8 +85,9 @@ export const mockGoals: Goal[] = [
 							month: 4,
 							day: 30
 						},
-						createdAt: new Date('2024-02-01'),
-						updatedAt: new Date('2024-03-20')
+						evidences: [],
+						createdAt: new Date('2024-02-01').toISOString(),
+						updatedAt: new Date('2024-03-20').toISOString()
 					},
 					{
 						id: '1-1-3',
@@ -106,12 +109,13 @@ export const mockGoals: Goal[] = [
 							year: 2024,
 							month: 5
 						},
-						createdAt: new Date('2024-03-01'),
-						updatedAt: new Date('2024-03-01')
+						evidences: [],
+						createdAt: new Date('2024-03-01').toISOString(),
+						updatedAt: new Date('2024-03-01').toISOString()
 					}
 				],
-				createdAt: new Date('2024-01-15'),
-				updatedAt: new Date('2024-03-20')
+				createdAt: new Date('2024-01-15').toISOString(),
+				updatedAt: new Date('2024-03-20').toISOString()
 			},
 			{
 				id: '1-2',
@@ -131,6 +135,7 @@ export const mockGoals: Goal[] = [
 					year: 2025,
 					month: 12
 				},
+				evidences: [],
 				tasks: [
 					{
 						id: '1-2-1',
@@ -151,8 +156,9 @@ export const mockGoals: Goal[] = [
 							year: 2024,
 							month: 7
 						},
-						createdAt: new Date('2024-04-01'),
-						updatedAt: new Date('2024-04-01')
+						evidences: [],
+						createdAt: new Date('2024-04-01').toISOString(),
+						updatedAt: new Date('2024-04-01').toISOString()
 					},
 					{
 						id: '1-2-2',
@@ -174,12 +180,13 @@ export const mockGoals: Goal[] = [
 							month: 9,
 							day: 30
 						},
-						createdAt: new Date('2024-05-01'),
-						updatedAt: new Date('2024-05-01')
+						evidences: [],
+						createdAt: new Date('2024-05-01').toISOString(),
+						updatedAt: new Date('2024-05-01').toISOString()
 					}
 				],
-				createdAt: new Date('2024-04-01'),
-				updatedAt: new Date('2024-04-01')
+				createdAt: new Date('2024-04-01').toISOString(),
+				updatedAt: new Date('2024-04-01').toISOString()
 			},
 			{
 				id: '1-3',
@@ -199,6 +206,7 @@ export const mockGoals: Goal[] = [
 					year: 2026,
 					month: 6
 				},
+				evidences: [],
 				tasks: [
 					{
 						id: '1-3-1',
@@ -220,16 +228,17 @@ export const mockGoals: Goal[] = [
 							month: 1,
 							day: 31
 						},
-						createdAt: new Date('2024-10-01'),
-						updatedAt: new Date('2024-10-01')
+						evidences: [],
+						createdAt: new Date('2024-10-01').toISOString(),
+						updatedAt: new Date('2024-10-01').toISOString()
 					}
 				],
-				createdAt: new Date('2024-10-01'),
-				updatedAt: new Date('2024-10-01')
+				createdAt: new Date('2024-10-01').toISOString(),
+				updatedAt: new Date('2024-10-01').toISOString()
 			}
 		],
-		createdAt: new Date('2024-01-15'),
-		updatedAt: new Date('2024-01-15')
+		createdAt: new Date('2024-01-15').toISOString(),
+		updatedAt: new Date('2024-01-15').toISOString()
 	},
 	{
 		id: '2',
@@ -267,6 +276,7 @@ export const mockGoals: Goal[] = [
 					year: 2025,
 					month: 12
 				},
+				evidences: [],
 				tasks: [
 					{
 						id: '2-1-1',
@@ -288,8 +298,9 @@ export const mockGoals: Goal[] = [
 							month: 3,
 							day: 15
 						},
-						createdAt: new Date('2024-02-01'),
-						updatedAt: new Date('2024-03-15')
+						evidences: [],
+						createdAt: new Date('2024-02-01').toISOString(),
+						updatedAt: new Date('2024-03-15').toISOString()
 					},
 					{
 						id: '2-1-2',
@@ -311,8 +322,9 @@ export const mockGoals: Goal[] = [
 							month: 6,
 							day: 30
 						},
-						createdAt: new Date('2024-03-01'),
-						updatedAt: new Date('2024-03-20')
+						evidences: [],
+						createdAt: new Date('2024-03-01').toISOString(),
+						updatedAt: new Date('2024-03-20').toISOString()
 					},
 					{
 						id: '2-1-3',
@@ -334,12 +346,13 @@ export const mockGoals: Goal[] = [
 							month: 8,
 							day: 31
 						},
-						createdAt: new Date('2024-04-01'),
-						updatedAt: new Date('2024-04-01')
+						evidences: [],
+						createdAt: new Date('2024-04-01').toISOString(),
+						updatedAt: new Date('2024-04-01').toISOString()
 					}
 				],
-				createdAt: new Date('2024-02-01'),
-				updatedAt: new Date('2024-03-20')
+				createdAt: new Date('2024-02-01').toISOString(),
+				updatedAt: new Date('2024-03-20').toISOString()
 			},
 			{
 				id: '2-2',
@@ -360,6 +373,7 @@ export const mockGoals: Goal[] = [
 					year: 2027,
 					month: 12
 				},
+				evidences: [],
 				tasks: [
 					{
 						id: '2-2-1',
@@ -381,12 +395,13 @@ export const mockGoals: Goal[] = [
 							month: 12,
 							day: 31
 						},
-						createdAt: new Date('2024-08-01'),
-						updatedAt: new Date('2024-08-01')
+						evidences: [],
+						createdAt: new Date('2024-08-01').toISOString(),
+						updatedAt: new Date('2024-08-01').toISOString()
 					}
 				],
-				createdAt: new Date('2024-08-01'),
-				updatedAt: new Date('2024-08-01')
+				createdAt: new Date('2024-08-01').toISOString(),
+				updatedAt: new Date('2024-08-01').toISOString()
 			},
 			{
 				id: '2-3',
@@ -406,6 +421,7 @@ export const mockGoals: Goal[] = [
 					year: 2028,
 					month: 12
 				},
+				evidences: [],
 				tasks: [
 					{
 						id: '2-3-1',
@@ -427,16 +443,17 @@ export const mockGoals: Goal[] = [
 							month: 3,
 							day: 31
 						},
-						createdAt: new Date('2025-01-01'),
-						updatedAt: new Date('2025-01-01')
+						evidences: [],
+						createdAt: new Date('2025-01-01').toISOString(),
+						updatedAt: new Date('2025-01-01').toISOString()
 					}
 				],
-				createdAt: new Date('2025-01-01'),
-				updatedAt: new Date('2025-01-01')
+				createdAt: new Date('2025-01-01').toISOString(),
+				updatedAt: new Date('2025-01-01').toISOString()
 			}
 		],
-		createdAt: new Date('2024-02-01'),
-		updatedAt: new Date('2024-02-01')
+		createdAt: new Date('2024-02-01').toISOString(),
+		updatedAt: new Date('2024-02-01').toISOString()
 	},
 	{
 		id: '3',
@@ -474,6 +491,7 @@ export const mockGoals: Goal[] = [
 					year: 2024,
 					month: 9
 				},
+				evidences: [],
 				tasks: [
 					{
 						id: '3-1-1',
@@ -495,8 +513,9 @@ export const mockGoals: Goal[] = [
 							month: 6,
 							day: 30
 						},
-						createdAt: new Date('2024-03-10'),
-						updatedAt: new Date('2024-03-10')
+						evidences: [],
+						createdAt: new Date('2024-03-10').toISOString(),
+						updatedAt: new Date('2024-03-10').toISOString()
 					},
 					{
 						id: '3-1-2',
@@ -518,8 +537,9 @@ export const mockGoals: Goal[] = [
 							month: 7,
 							day: 31
 						},
-						createdAt: new Date('2024-04-01'),
-						updatedAt: new Date('2024-04-01')
+						evidences: [],
+						createdAt: new Date('2024-04-01').toISOString(),
+						updatedAt: new Date('2024-04-01').toISOString()
 					},
 					{
 						id: '3-1-3',
@@ -541,12 +561,13 @@ export const mockGoals: Goal[] = [
 							month: 9,
 							day: 30
 						},
-						createdAt: new Date('2024-05-01'),
-						updatedAt: new Date('2024-05-01')
+						evidences: [],
+						createdAt: new Date('2024-05-01').toISOString(),
+						updatedAt: new Date('2024-05-01').toISOString()
 					}
 				],
-				createdAt: new Date('2024-03-10'),
-				updatedAt: new Date('2024-03-10')
+				createdAt: new Date('2024-03-10').toISOString(),
+				updatedAt: new Date('2024-03-10').toISOString()
 			},
 			{
 				id: '3-2',
@@ -566,6 +587,7 @@ export const mockGoals: Goal[] = [
 					year: 2025,
 					month: 3
 				},
+				evidences: [],
 				tasks: [
 					{
 						id: '3-2-1',
@@ -587,8 +609,9 @@ export const mockGoals: Goal[] = [
 							month: 10,
 							day: 31
 						},
-						createdAt: new Date('2024-09-01'),
-						updatedAt: new Date('2024-09-01')
+						evidences: [],
+						createdAt: new Date('2024-09-01').toISOString(),
+						updatedAt: new Date('2024-09-01').toISOString()
 					},
 					{
 						id: '3-2-2',
@@ -610,8 +633,9 @@ export const mockGoals: Goal[] = [
 							month: 1,
 							day: 31
 						},
-						createdAt: new Date('2024-10-01'),
-						updatedAt: new Date('2024-10-01')
+						evidences: [],
+						createdAt: new Date('2024-10-01').toISOString(),
+						updatedAt: new Date('2024-10-01').toISOString()
 					},
 					{
 						id: '3-2-3',
@@ -633,12 +657,13 @@ export const mockGoals: Goal[] = [
 							month: 1,
 							day: 31
 						},
-						createdAt: new Date('2024-12-01'),
-						updatedAt: new Date('2024-12-01')
+						evidences: [],
+						createdAt: new Date('2024-12-01').toISOString(),
+						updatedAt: new Date('2024-12-01').toISOString()
 					}
 				],
-				createdAt: new Date('2024-09-01'),
-				updatedAt: new Date('2024-09-01')
+				createdAt: new Date('2024-09-01').toISOString(),
+				updatedAt: new Date('2024-09-01').toISOString()
 			},
 			{
 				id: '3-3',
@@ -658,6 +683,7 @@ export const mockGoals: Goal[] = [
 					year: 2027,
 					month: 6
 				},
+				evidences: [],
 				tasks: [
 					{
 						id: '3-3-1',
@@ -679,8 +705,9 @@ export const mockGoals: Goal[] = [
 							month: 4,
 							day: 30
 						},
-						createdAt: new Date('2025-03-01'),
-						updatedAt: new Date('2025-03-01')
+						evidences: [],
+						createdAt: new Date('2025-03-01').toISOString(),
+						updatedAt: new Date('2025-03-01').toISOString()
 					},
 					{
 						id: '3-3-2',
@@ -702,8 +729,9 @@ export const mockGoals: Goal[] = [
 							month: 6,
 							day: 30
 						},
-						createdAt: new Date('2025-05-01'),
-						updatedAt: new Date('2025-05-01')
+						evidences: [],
+						createdAt: new Date('2025-05-01').toISOString(),
+						updatedAt: new Date('2025-05-01').toISOString()
 					},
 					{
 						id: '3-3-3',
@@ -725,15 +753,16 @@ export const mockGoals: Goal[] = [
 							month: 12,
 							day: 31
 						},
-						createdAt: new Date('2025-06-01'),
-						updatedAt: new Date('2025-06-01')
+						evidences: [],
+						createdAt: new Date('2025-06-01').toISOString(),
+						updatedAt: new Date('2025-06-01').toISOString()
 					}
 				],
-				createdAt: new Date('2025-03-01'),
-				updatedAt: new Date('2025-03-01')
+				createdAt: new Date('2025-03-01').toISOString(),
+				updatedAt: new Date('2025-03-01').toISOString()
 			}
 		],
-		createdAt: new Date('2024-03-10'),
-		updatedAt: new Date('2024-03-10')
+		createdAt: new Date('2024-03-10').toISOString(),
+		updatedAt: new Date('2024-03-10').toISOString()
 	}
 ];

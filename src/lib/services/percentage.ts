@@ -2,6 +2,8 @@ import type { Task, Milestone, TaskStatus } from '$lib/models/types';
 import { calculatePriority } from './priority';
 
 export function getGoalCompletionPercentage(milestones: Milestone[]): number {
+	if (milestones.length === 0) return 0;
+
 	let totalPoints = 0;
 	let completedPoints = 0;
 
@@ -18,6 +20,8 @@ export function getGoalCompletionPercentage(milestones: Milestone[]): number {
 }
 
 export function getMilestoneCompletionPercentage(tasks: Task[]): number {
+	if (tasks.length === 0) return 0;
+
 	let totalPoints = 0;
 	let completedPoints = 0;
 

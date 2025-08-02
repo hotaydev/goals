@@ -2,6 +2,7 @@
 	import '../app.css';
 	import { Target } from '@lucide/svelte';
 	import ThemeSwitcher from '$lib/components/ThemeSwitcher.svelte';
+	import ImportExportDropdown from '$lib/components/ImportExportDropdown.svelte';
 
 	let { children } = $props();
 </script>
@@ -16,8 +17,11 @@
 				<span>Goals</span>
 			</a>
 
-			<!-- Theme Switcher -->
-			<ThemeSwitcher />
+			<!-- Controls -->
+			<div class="controls">
+				<ImportExportDropdown />
+				<ThemeSwitcher />
+			</div>
 		</div>
 	</div>
 </header>

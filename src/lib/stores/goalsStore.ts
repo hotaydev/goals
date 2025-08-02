@@ -1,5 +1,5 @@
 import { writable, derived } from 'svelte/store';
-import type { Goal, Milestone, Task } from '../models/types';
+import type { Goal, Milestone, Task, Evidence } from '../models/types';
 import { mockGoals } from '../data/goals';
 import { browser } from '$app/environment';
 
@@ -8,6 +8,29 @@ const STORAGE_KEY = 'goals-app-data';
 export interface StorageData {
 	goals: Goal[];
 	lastUpdated: string;
+}
+
+// Helper function to migrate data structure
+function migrateDataStructure(data: unknown): Goal[] {
+	if (!Array.isArray(data)) return data as Goal[];
+
+	return data.map((goal: Record<string, unknown>) => ({
+		...goal,
+		milestones:
+			(goal.milestones as Record<string, unknown>[] | undefined)?.map(
+				(milestone: Record<string, unknown>) => ({
+					...milestone,
+					evidences: (milestone.evidences as unknown[]) || [],
+					tasks:
+						(milestone.tasks as Record<string, unknown>[] | undefined)?.map(
+							(task: Record<string, unknown>) => ({
+								...task,
+								evidences: (task.evidences as unknown[]) || []
+							})
+						) || []
+				})
+			) || []
+	})) as Goal[];
 }
 
 // Helper function to load data from localStorage
@@ -23,9 +46,10 @@ function loadFromStorage(): StorageData {
 		}
 
 		const parsed = JSON.parse(data) as StorageData;
+		const migratedGoals = migrateDataStructure(parsed.goals);
 		return {
 			...parsed,
-			goals: parsed.goals.length > 0 ? parsed.goals : mockGoals
+			goals: migratedGoals.length > 0 ? migratedGoals : mockGoals
 		};
 	} catch (error) {
 		console.error('Failed to load data from localStorage:', error);
@@ -185,6 +209,7 @@ function createGoalsStore() {
 					const milestone: Milestone = {
 						...newMilestone,
 						id: crypto.randomUUID(),
+						evidences: [],
 						tasks: [],
 						createdAt: new Date().toISOString(),
 						updatedAt: new Date().toISOString()
@@ -304,6 +329,7 @@ function createGoalsStore() {
 						const task: Task = {
 							...newTask,
 							id: crypto.randomUUID(),
+							evidences: [],
 							createdAt: new Date().toISOString(),
 							updatedAt: new Date().toISOString()
 						};
@@ -410,6 +436,329 @@ function createGoalsStore() {
 				}
 			}
 			return null;
+		},
+
+		// Import/Export operations
+		exportData(): StorageData {
+			let currentData: StorageData;
+			const unsubscribe = subscribe((data) => {
+				currentData = data;
+			});
+			unsubscribe();
+			return currentData!;
+		},
+
+		importData(data: StorageData) {
+			updateAndSave(() => ({
+				...data,
+				lastUpdated: new Date().toISOString()
+			}));
+		},
+
+		hasData(): boolean {
+			let currentData: StorageData;
+			const unsubscribe = subscribe((data) => {
+				currentData = data;
+			});
+			unsubscribe();
+			return currentData!.goals.length > 0;
+		},
+
+		// Evidence CRUD operations for Tasks
+		addTaskEvidence(
+			goalId: string,
+			milestoneId: string,
+			taskId: string,
+			evidenceData: Omit<Evidence, 'id' | 'createdAt' | 'updatedAt'>
+		) {
+			updateAndSave((data) => {
+				const goalIndex = data.goals.findIndex((g) => g.id === goalId);
+				if (goalIndex !== -1) {
+					const goal = data.goals[goalIndex];
+					const milestoneIndex = goal.milestones.findIndex((m) => m.id === milestoneId);
+					if (milestoneIndex !== -1) {
+						const milestone = goal.milestones[milestoneIndex];
+						const taskIndex = milestone.tasks.findIndex((t) => t.id === taskId);
+						if (taskIndex !== -1) {
+							const task = milestone.tasks[taskIndex];
+							const newEvidence: Evidence = {
+								id: crypto.randomUUID(),
+								...evidenceData,
+								createdAt: new Date().toISOString(),
+								updatedAt: new Date().toISOString()
+							};
+
+							const newTasks = [...milestone.tasks];
+							newTasks[taskIndex] = {
+								...task,
+								evidences: [...task.evidences, newEvidence],
+								updatedAt: new Date().toISOString()
+							};
+
+							const newMilestones = [...goal.milestones];
+							newMilestones[milestoneIndex] = {
+								...milestone,
+								tasks: newTasks,
+								updatedAt: new Date().toISOString()
+							};
+
+							const newGoals = [...data.goals];
+							newGoals[goalIndex] = {
+								...goal,
+								milestones: newMilestones,
+								updatedAt: new Date().toISOString()
+							};
+
+							return {
+								...data,
+								goals: newGoals,
+								lastUpdated: new Date().toISOString()
+							};
+						}
+					}
+				}
+				return data;
+			});
+		},
+
+		updateTaskEvidence(
+			goalId: string,
+			milestoneId: string,
+			taskId: string,
+			evidenceId: string,
+			evidenceData: Omit<Evidence, 'id' | 'createdAt' | 'updatedAt'>
+		) {
+			updateAndSave((data) => {
+				const goalIndex = data.goals.findIndex((g) => g.id === goalId);
+				if (goalIndex !== -1) {
+					const goal = data.goals[goalIndex];
+					const milestoneIndex = goal.milestones.findIndex((m) => m.id === milestoneId);
+					if (milestoneIndex !== -1) {
+						const milestone = goal.milestones[milestoneIndex];
+						const taskIndex = milestone.tasks.findIndex((t) => t.id === taskId);
+						if (taskIndex !== -1) {
+							const task = milestone.tasks[taskIndex];
+							const evidenceIndex = task.evidences.findIndex((e) => e.id === evidenceId);
+							if (evidenceIndex !== -1) {
+								const existingEvidence = task.evidences[evidenceIndex];
+								const updatedEvidence: Evidence = {
+									...existingEvidence,
+									...evidenceData,
+									updatedAt: new Date().toISOString()
+								};
+
+								const newEvidences = [...task.evidences];
+								newEvidences[evidenceIndex] = updatedEvidence;
+
+								const newTasks = [...milestone.tasks];
+								newTasks[taskIndex] = {
+									...task,
+									evidences: newEvidences,
+									updatedAt: new Date().toISOString()
+								};
+
+								const newMilestones = [...goal.milestones];
+								newMilestones[milestoneIndex] = {
+									...milestone,
+									tasks: newTasks,
+									updatedAt: new Date().toISOString()
+								};
+
+								const newGoals = [...data.goals];
+								newGoals[goalIndex] = {
+									...goal,
+									milestones: newMilestones,
+									updatedAt: new Date().toISOString()
+								};
+
+								return {
+									...data,
+									goals: newGoals,
+									lastUpdated: new Date().toISOString()
+								};
+							}
+						}
+					}
+				}
+				return data;
+			});
+		},
+
+		deleteTaskEvidence(goalId: string, milestoneId: string, taskId: string, evidenceId: string) {
+			updateAndSave((data) => {
+				const goalIndex = data.goals.findIndex((g) => g.id === goalId);
+				if (goalIndex !== -1) {
+					const goal = data.goals[goalIndex];
+					const milestoneIndex = goal.milestones.findIndex((m) => m.id === milestoneId);
+					if (milestoneIndex !== -1) {
+						const milestone = goal.milestones[milestoneIndex];
+						const taskIndex = milestone.tasks.findIndex((t) => t.id === taskId);
+						if (taskIndex !== -1) {
+							const task = milestone.tasks[taskIndex];
+							const newEvidences = task.evidences.filter((e) => e.id !== evidenceId);
+
+							const newTasks = [...milestone.tasks];
+							newTasks[taskIndex] = {
+								...task,
+								evidences: newEvidences,
+								updatedAt: new Date().toISOString()
+							};
+
+							const newMilestones = [...goal.milestones];
+							newMilestones[milestoneIndex] = {
+								...milestone,
+								tasks: newTasks,
+								updatedAt: new Date().toISOString()
+							};
+
+							const newGoals = [...data.goals];
+							newGoals[goalIndex] = {
+								...goal,
+								milestones: newMilestones,
+								updatedAt: new Date().toISOString()
+							};
+
+							return {
+								...data,
+								goals: newGoals,
+								lastUpdated: new Date().toISOString()
+							};
+						}
+					}
+				}
+				return data;
+			});
+		},
+
+		// Evidence CRUD operations for Milestones
+		addMilestoneEvidence(
+			goalId: string,
+			milestoneId: string,
+			evidenceData: Omit<Evidence, 'id' | 'createdAt' | 'updatedAt'>
+		) {
+			updateAndSave((data) => {
+				const goalIndex = data.goals.findIndex((g) => g.id === goalId);
+				if (goalIndex !== -1) {
+					const goal = data.goals[goalIndex];
+					const milestoneIndex = goal.milestones.findIndex((m) => m.id === milestoneId);
+					if (milestoneIndex !== -1) {
+						const milestone = goal.milestones[milestoneIndex];
+						const newEvidence: Evidence = {
+							id: crypto.randomUUID(),
+							...evidenceData,
+							createdAt: new Date().toISOString(),
+							updatedAt: new Date().toISOString()
+						};
+
+						const newMilestones = [...goal.milestones];
+						newMilestones[milestoneIndex] = {
+							...milestone,
+							evidences: [...milestone.evidences, newEvidence],
+							updatedAt: new Date().toISOString()
+						};
+
+						const newGoals = [...data.goals];
+						newGoals[goalIndex] = {
+							...goal,
+							milestones: newMilestones,
+							updatedAt: new Date().toISOString()
+						};
+
+						return {
+							...data,
+							goals: newGoals,
+							lastUpdated: new Date().toISOString()
+						};
+					}
+				}
+				return data;
+			});
+		},
+
+		updateMilestoneEvidence(
+			goalId: string,
+			milestoneId: string,
+			evidenceId: string,
+			evidenceData: Omit<Evidence, 'id' | 'createdAt' | 'updatedAt'>
+		) {
+			updateAndSave((data) => {
+				const goalIndex = data.goals.findIndex((g) => g.id === goalId);
+				if (goalIndex !== -1) {
+					const goal = data.goals[goalIndex];
+					const milestoneIndex = goal.milestones.findIndex((m) => m.id === milestoneId);
+					if (milestoneIndex !== -1) {
+						const milestone = goal.milestones[milestoneIndex];
+						const evidenceIndex = milestone.evidences.findIndex((e) => e.id === evidenceId);
+						if (evidenceIndex !== -1) {
+							const existingEvidence = milestone.evidences[evidenceIndex];
+							const updatedEvidence: Evidence = {
+								...existingEvidence,
+								...evidenceData,
+								updatedAt: new Date().toISOString()
+							};
+
+							const newEvidences = [...milestone.evidences];
+							newEvidences[evidenceIndex] = updatedEvidence;
+
+							const newMilestones = [...goal.milestones];
+							newMilestones[milestoneIndex] = {
+								...milestone,
+								evidences: newEvidences,
+								updatedAt: new Date().toISOString()
+							};
+
+							const newGoals = [...data.goals];
+							newGoals[goalIndex] = {
+								...goal,
+								milestones: newMilestones,
+								updatedAt: new Date().toISOString()
+							};
+
+							return {
+								...data,
+								goals: newGoals,
+								lastUpdated: new Date().toISOString()
+							};
+						}
+					}
+				}
+				return data;
+			});
+		},
+
+		deleteMilestoneEvidence(goalId: string, milestoneId: string, evidenceId: string) {
+			updateAndSave((data) => {
+				const goalIndex = data.goals.findIndex((g) => g.id === goalId);
+				if (goalIndex !== -1) {
+					const goal = data.goals[goalIndex];
+					const milestoneIndex = goal.milestones.findIndex((m) => m.id === milestoneId);
+					if (milestoneIndex !== -1) {
+						const milestone = goal.milestones[milestoneIndex];
+						const newEvidences = milestone.evidences.filter((e) => e.id !== evidenceId);
+
+						const newMilestones = [...goal.milestones];
+						newMilestones[milestoneIndex] = {
+							...milestone,
+							evidences: newEvidences,
+							updatedAt: new Date().toISOString()
+						};
+
+						const newGoals = [...data.goals];
+						newGoals[goalIndex] = {
+							...goal,
+							milestones: newMilestones,
+							updatedAt: new Date().toISOString()
+						};
+
+						return {
+							...data,
+							goals: newGoals,
+							lastUpdated: new Date().toISOString()
+						};
+					}
+				}
+				return data;
+			});
 		}
 	};
 }

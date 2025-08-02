@@ -17,6 +17,15 @@ export interface SMARTCriteria {
 	timeBound: string;
 }
 
+export interface Evidence {
+	id: string;
+	title: string;
+	content: string;
+	type: 'link' | 'note';
+	createdAt: string;
+	updatedAt: string;
+}
+
 export interface Task {
 	id: string;
 	title: string;
@@ -27,6 +36,7 @@ export interface Task {
 	effort: ValueEffortLevel;
 	smart: SMARTCriteria;
 	targetDate: TargetDate;
+	evidences: Evidence[];
 	createdAt: string;
 	updatedAt: string;
 }
@@ -41,6 +51,7 @@ export interface Milestone {
 	smart: SMARTCriteria;
 	targetDate: TargetDate;
 	tasks: Task[];
+	evidences: Evidence[];
 	createdAt: string;
 	updatedAt: string;
 }

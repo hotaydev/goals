@@ -208,14 +208,9 @@
 	}
 
 	.form-section {
-		margin-bottom: var(--spacing-xl);
-		padding-bottom: var(--spacing-lg);
 		border-bottom: 1px solid var(--color-border);
-	}
-
-	.form-section:last-child {
-		border-bottom: none;
-		margin-bottom: 0;
+		padding-bottom: var(--spacing-md);
+		margin-bottom: var(--spacing-md);
 	}
 
 	.form-section h3 {
@@ -311,9 +306,6 @@
 		display: flex;
 		justify-content: flex-end;
 		gap: var(--spacing-md);
-		padding-top: var(--spacing-lg);
-		border-top: 1px solid var(--color-border);
-		margin-top: var(--spacing-xl);
 	}
 
 	.button-primary,

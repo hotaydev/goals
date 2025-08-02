@@ -2,6 +2,8 @@
 export { default as ActionDropdown } from './ActionDropdown.svelte';
 export { default as DeleteConfirmationModal } from './DeleteConfirmationModal.svelte';
 export { default as GoalCard } from './GoalCard.svelte';
+export { default as ImportConfirmationModal } from './ImportConfirmationModal.svelte';
+export { default as ImportExportDropdown } from './ImportExportDropdown.svelte';
 export { default as GoalCreationModal } from './GoalCreationModal.svelte';
 export { default as GoalHeader } from './GoalHeader.svelte';
 export { default as GoalModal } from './GoalModal.svelte';
@@ -19,3 +21,6 @@ export { default as ThemeSwitcher } from './ThemeSwitcher.svelte';
 export { default as TimeRemaining } from './TimeRemaining.svelte';
 export { default as EditableForm } from './EditableForm.svelte';
 export { default as TaskForm } from './TaskForm.svelte';
+export { default as EvidenceList } from './EvidenceList.svelte';
+export { default as EvidenceForm } from './EvidenceForm.svelte';
+export { default as EvidenceModal } from './EvidenceModal.svelte';

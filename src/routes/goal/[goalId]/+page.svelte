@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 	import { ArrowLeft, Edit, Trash2, Plus } from '@lucide/svelte';
 	import { goalsStore, goals, getGoal } from '$lib/stores/goalsStore';
 	import { modalStore } from '$lib/stores/modalStore';
@@ -66,12 +67,12 @@
 	});
 
 	function handleGoBack() {
-		window.location.href = '/';
+		goto('/');
 	}
 
 	function handleEditGoal() {
 		if (goal) {
-			modalStore.openGoalModal(goal.id, 'edit');
+			modalStore.openGoalModal(goal.id);
 		}
 	}
 
@@ -87,7 +88,7 @@
 					goalsStore.deleteGoal(goal.id);
 					modalStore.closeDeleteConfirmationModal();
 					// Navigate back to main page after deletion
-					window.location.href = '/';
+					goto('/');
 				}
 			);
 		}
