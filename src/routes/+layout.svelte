@@ -1,10 +1,18 @@
 <script lang="ts">
 	import '../app.css';
-	import { Target, CheckSquare } from '@lucide/svelte';
+	import { Target, CheckSquare, Search } from '@lucide/svelte';
 	import ThemeSwitcher from '$lib/components/ThemeSwitcher.svelte';
 	import ImportExportDropdown from '$lib/components/ImportExportDropdown.svelte';
+	import CommandPalette from '$lib/components/CommandPalette.svelte';
 
 	let { children } = $props();
+	let commandPaletteRef: CommandPalette;
+
+	function openCommandPalette() {
+		if (commandPaletteRef && commandPaletteRef.toggleCommandPalette) {
+			commandPaletteRef.toggleCommandPalette();
+		}
+	}
 </script>
 
 <!-- Top Bar -->
@@ -19,6 +27,9 @@
 
 			<!-- Controls -->
 			<div class="controls">
+				<button class="btn btn-icon" title="Search (⌘K)" onclick={openCommandPalette}>
+					<Search size={20} />
+				</button>
 				<a href="/tasks" class="btn btn-icon">
 					<CheckSquare size={20} />
 				</a>
@@ -35,3 +46,6 @@
 		{@render children()}
 	</div>
 </main>
+
+<!-- Command Palette -->
+<CommandPalette bind:this={commandPaletteRef} />

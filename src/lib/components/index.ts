@@ -27,3 +27,4 @@ export { default as EvidenceModal } from './EvidenceModal.svelte';
 export { default as EmojiSelector } from './EmojiSelector.svelte';
 export { default as TaskCard } from './TaskCard.svelte';
 export { default as KanbanColumn } from './KanbanColumn.svelte';
+export { default as CommandPalette } from './CommandPalette.svelte';

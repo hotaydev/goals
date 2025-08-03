@@ -20,6 +20,11 @@
 	const goalStore = $derived(getGoal(goalId));
 	const goal = $derived($goalStore);
 
+	// Get URL parameters
+	const urlParams = $derived(page.url.searchParams);
+	const milestoneParam = $derived(urlParams.get('milestone'));
+	const taskParam = $derived(urlParams.get('task'));
+
 	// Sort milestones by priority (highest first) then by completion percentage (Higher completion first - less work needed to complete)
 	const sortedMilestones = $derived(
 		goal
@@ -63,6 +68,27 @@
 	$effect(() => {
 		if (!loading && goalId && !goal) {
 			error = 'Goal not found';
+		}
+	});
+
+	// Handle URL parameters for opening specific items
+	$effect(() => {
+		if (!loading && goal && (milestoneParam || taskParam)) {
+			// Clear URL parameters after processing
+			const newUrl = new URL(window.location.href);
+			newUrl.searchParams.delete('milestone');
+			newUrl.searchParams.delete('task');
+			window.history.replaceState({}, '', newUrl.toString());
+
+			if (taskParam) {
+				// Find the milestone containing this task
+				const milestone = goal.milestones.find((m) => m.tasks.some((t) => t.id === taskParam));
+				if (milestone) {
+					modalStore.openTaskModal(taskParam);
+				}
+			} else if (milestoneParam) {
+				modalStore.openMilestoneModal(milestoneParam);
+			}
 		}
 	});
 
