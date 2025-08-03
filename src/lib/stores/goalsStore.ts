@@ -644,3 +644,18 @@ export const getTask = (goalId: string, milestoneId: string, taskId: string) =>
 		const milestone = goal?.milestones.find((m) => m.id === milestoneId);
 		return milestone?.tasks.find((t) => t.id === taskId) || null;
 	});
+
+export const getAllTasksWithMilestones = () =>
+	derived(goalsStore, ($store) => {
+		const tasksWithMilestones: Array<{ task: Task; milestone: Milestone }> = [];
+
+		$store.forEach((goal) => {
+			goal.milestones.forEach((milestone) => {
+				milestone.tasks.forEach((task) => {
+					tasksWithMilestones.push({ task, milestone });
+				});
+			});
+		});
+
+		return tasksWithMilestones;
+	});

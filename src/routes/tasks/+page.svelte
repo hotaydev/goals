@@ -1,5 +1,71 @@
 <script lang="ts">
-	import { CheckSquare, ArrowLeft } from '@lucide/svelte';
+	import { ArrowLeft } from '@lucide/svelte';
+	import { getAllTasksWithMilestones, goals } from '$lib/stores/goalsStore';
+	import { ModalManager } from '$lib/components';
+	import KanbanColumn from '$lib/components/KanbanColumn.svelte';
+	import { calculateTimeRemaining } from '$lib/services/date';
+	import type { Task, Milestone } from '$lib/models/types';
+
+	// Get all tasks with their milestone information
+	const allTasksWithMilestones = getAllTasksWithMilestones();
+
+	// Define the columns configuration
+	const columns = [
+		{
+			status: 'backlog',
+			title: 'Backlog',
+			icon: '📋',
+			color: 'var(--color-text-muted)'
+		},
+		{
+			status: 'planned',
+			title: 'Planned',
+			icon: '📅',
+			color: 'var(--color-primary)'
+		},
+		{
+			status: 'in_progress',
+			title: 'In Progress',
+			icon: '⚡',
+			color: 'var(--color-warning)'
+		},
+		{
+			status: 'done',
+			title: 'Done',
+			icon: '✅',
+			color: 'var(--color-success)'
+		}
+	];
+
+	// Group tasks by status
+	const tasksByStatus = $derived(() => {
+		const grouped: Record<string, Array<{ task: Task; milestone: Milestone }>> = {
+			backlog: [],
+			planned: [],
+			in_progress: [],
+			done: []
+		};
+
+		$allTasksWithMilestones.forEach(({ task, milestone }) => {
+			// Map task status to column status
+			let columnStatus: string = task.status;
+
+			const timeRemaining = calculateTimeRemaining(task.targetDate);
+
+			if (task.status === 'planned' && timeRemaining.category === 'plenty') {
+				columnStatus = 'backlog';
+			}
+
+			grouped[columnStatus].push({ task, milestone });
+		});
+
+		return grouped;
+	});
+
+	// Get tasks for a specific status
+	function getTasksForStatus(status: string) {
+		return tasksByStatus()[status] || [];
+	}
 </script>
 
 <div class="page-container">
@@ -16,18 +82,17 @@
 		</div>
 	</div>
 
-	<!-- Placeholder Content -->
-	<div class="placeholder-content">
-		<div class="placeholder-icon">
-			<CheckSquare size={64} />
-		</div>
-		<h3>Tasks Board Coming Soon</h3>
-		<p>
-			This view will provide a comprehensive board interface for managing all your tasks across
-			different goals.
-		</p>
+	<!-- Kanban Board -->
+	<div class="kanban-board">
+		{#each columns as column (column.status)}
+			{@const tasks = getTasksForStatus(column.status)}
+			<KanbanColumn title={column.title} {tasks} icon={column.icon} color={column.color} />
+		{/each}
 	</div>
 </div>
+
+<!-- Modal Manager for Task Modals -->
+<ModalManager goals={$goals} />
 
 <style>
 	.page-container {
@@ -41,6 +106,8 @@
 		justify-content: space-between;
 		align-items: flex-start;
 		gap: var(--spacing-lg);
+		padding: var(--spacing-lg) 0;
+		flex-shrink: 0;
 	}
 
 	.header-content {
@@ -62,37 +129,44 @@
 		margin: 0;
 	}
 
-	.placeholder-content {
+	.kanban-board {
 		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		text-align: center;
-		padding: var(--spacing-2xl);
-		gap: var(--spacing-md);
-		margin-top: calc(var(--spacing-2xl) * 2);
+		gap: var(--spacing-sm);
+		overflow-x: auto;
+		padding: 0 var(--spacing-sm) var(--spacing-lg) var(--spacing-sm);
+		flex: 1;
+		min-height: 0;
 	}
 
-	.placeholder-icon {
-		opacity: 0.5;
-		color: var(--color-text-secondary);
+	/* Custom scrollbar for the kanban board */
+	.kanban-board::-webkit-scrollbar {
+		height: 8px;
 	}
 
-	.placeholder-content h3 {
-		margin: 0;
-		color: var(--color-text-primary);
+	.kanban-board::-webkit-scrollbar-track {
+		background: var(--color-surface-elevated);
+		border-radius: var(--radius-sm);
 	}
 
-	.placeholder-content p {
-		margin: 0;
-		max-width: 400px;
-		color: var(--color-text-secondary);
+	.kanban-board::-webkit-scrollbar-thumb {
+		background: var(--color-border);
+		border-radius: var(--radius-sm);
+	}
+
+	.kanban-board::-webkit-scrollbar-thumb:hover {
+		background: var(--color-border-hover);
 	}
 
 	@media (max-width: 768px) {
 		.page-header {
 			flex-direction: column;
 			align-items: stretch;
+			padding: var(--spacing-md) 0;
+		}
+
+		.kanban-board {
+			gap: var(--spacing-md);
+			padding: 0 var(--spacing-xs) var(--spacing-md) var(--spacing-xs);
 		}
 	}
 </style>
