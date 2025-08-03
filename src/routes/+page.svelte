@@ -2,7 +2,7 @@
 	import { Plus } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import GoalCard from '$lib/components/GoalCard.svelte';
+	import { GoalCard } from '$lib/components/Goals';
 	import ModalManager from '$lib/components/ModalManager.svelte';
 	import type { Goal } from '$lib/models/types';
 	import { goalsStore, goals } from '$lib/stores/goalsStore';

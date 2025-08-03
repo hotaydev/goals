@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { SMARTCriteria, TargetDate, ValueEffortLevel, TaskStatus } from '$lib/models/types';
-	import EditableForm from './EditableForm.svelte';
+	import EditableForm from '$lib/components/EditableForm.svelte';
 
 	interface Props {
 		title: string;

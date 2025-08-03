@@ -2,7 +2,7 @@
 	import type { Evidence, Goal, Milestone, Task } from '$lib/models/types';
 	import { goalsStore } from '$lib/stores/goalsStore';
 	import { modalStore } from '$lib/stores/modalStore';
-	import Modal from './Modal.svelte';
+	import Modal from '$lib/components/Modal.svelte';
 	import EvidenceForm from './EvidenceForm.svelte';
 
 	interface Props {

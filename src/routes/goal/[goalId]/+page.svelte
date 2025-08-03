@@ -5,9 +5,9 @@
 	import { ArrowLeft, Edit, Trash2, Plus } from '@lucide/svelte';
 	import { goalsStore, goals, getGoal } from '$lib/stores/goalsStore';
 	import { modalStore } from '$lib/stores/modalStore';
-	import GoalHeader from '$lib/components/GoalHeader.svelte';
+	import GoalHeader from '$lib/components/Goals/GoalHeader.svelte';
 	import SMARTSection from '$lib/components/SMARTSection.svelte';
-	import MilestoneCard from '$lib/components/MilestoneCard.svelte';
+	import MilestoneCard from '$lib/components/Milestones/MilestoneCard.svelte';
 	import ModalManager from '$lib/components/ModalManager.svelte';
 	import { calculatePriority } from '$lib/services/priority';
 	import { getMilestoneCompletionPercentage } from '$lib/services/percentage';

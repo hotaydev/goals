@@ -3,7 +3,7 @@
 	import { calculatePriority, getEffortLabel, getPriorityLabel } from '$lib/services/priority';
 	import { targetDateToDate } from '$lib/services/date';
 	import { modalStore } from '$lib/stores/modalStore';
-	import TimeRemaining from './TimeRemaining.svelte';
+	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
 
 	interface Props {
 		tasks: Task[];

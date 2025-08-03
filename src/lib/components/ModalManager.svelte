@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { modalStore } from '$lib/stores/modalStore';
-	import MilestoneModal from './MilestoneModal.svelte';
-	import TaskModal from './TaskModal.svelte';
-	import GoalModal from './GoalModal.svelte';
-	import GoalCreationModal from './GoalCreationModal.svelte';
-	import DeleteConfirmationModal from './DeleteConfirmationModal.svelte';
-	import ImportConfirmationModal from './ImportConfirmationModal.svelte';
-	import EvidenceModal from './EvidenceModal.svelte';
+	import MilestoneModal from '$lib/components/Milestones/MilestoneModal.svelte';
+	import TaskModal from '$lib/components/Tasks/TaskModal.svelte';
+	import GoalModal from '$lib/components/Goals/GoalModal.svelte';
+	import GoalCreationModal from '$lib/components/Goals/GoalCreationModal.svelte';
+	import DeleteConfirmationModal from '$lib/components/DeleteConfirmationModal.svelte';
+	import ImportConfirmationModal from '$lib/components/Backup/ImportConfirmationModal.svelte';
+	import EvidenceModal from '$lib/components/Evidences/EvidenceModal.svelte';
 	import type { Goal } from '$lib/models/types';
 
 	interface Props {

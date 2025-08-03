@@ -12,14 +12,14 @@
 	import { goalsStore } from '$lib/stores/goalsStore';
 	import { modalStore, type ModalMode } from '$lib/stores/modalStore';
 	import { Plus } from '@lucide/svelte';
-	import Modal from './Modal.svelte';
-	import SMARTSection from './SMARTSection.svelte';
-	import ProgressBar from './ProgressBar.svelte';
-	import TaskList from './TaskList.svelte';
-	import EditableForm from './EditableForm.svelte';
-	import TimeRemaining from './TimeRemaining.svelte';
-	import ActionDropdown from './ActionDropdown.svelte';
-	import EvidenceList from './EvidenceList.svelte';
+	import Modal from '$lib/components/Modal.svelte';
+	import SMARTSection from '$lib/components/SMARTSection.svelte';
+	import ProgressBar from '$lib/components/ProgressBar.svelte';
+	import TaskList from '$lib/components/Tasks/TaskList.svelte';
+	import EditableForm from '$lib/components/EditableForm.svelte';
+	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
+	import ActionDropdown from '$lib/components/ActionDropdown.svelte';
+	import EvidenceList from '$lib/components/Evidences/EvidenceList.svelte';
 
 	interface Props {
 		milestone: Milestone | null;

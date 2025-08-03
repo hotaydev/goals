@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goalsStore } from '$lib/stores/goalsStore';
-	import Modal from './Modal.svelte';
+	import Modal from '$lib/components/Modal.svelte';
 	import GoalForm, { type GoalFormData } from './GoalForm.svelte';
 
 	interface Props {

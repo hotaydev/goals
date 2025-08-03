@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { ArrowLeft } from '@lucide/svelte';
 	import { getAllTasksWithMilestones, goals } from '$lib/stores/goalsStore';
-	import { ModalManager } from '$lib/components';
+	import ModalManager from '$lib/components/ModalManager.svelte';
 	import KanbanColumn from '$lib/components/KanbanColumn.svelte';
 	import { calculateTimeRemaining } from '$lib/services/date';
 	import type { Task, Milestone } from '$lib/models/types';
+	import { calculatePriority } from '$lib/services/priority';
 
 	// Get all tasks with their milestone information
 	const allTasksWithMilestones = getAllTasksWithMilestones();
@@ -64,7 +65,12 @@
 
 	// Get tasks for a specific status
 	function getTasksForStatus(status: string) {
-		return tasksByStatus()[status] || [];
+		const tasksForStatus = tasksByStatus()[status] || [];
+		return tasksForStatus.sort((a, b) => {
+			const priorityA = calculatePriority(a.task.value, a.task.effort);
+			const priorityB = calculatePriority(b.task.value, b.task.effort);
+			return priorityB - priorityA;
+		});
 	}
 </script>
 

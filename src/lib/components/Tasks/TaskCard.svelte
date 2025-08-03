@@ -2,7 +2,7 @@
 	import type { Task, Milestone } from '$lib/models/types';
 	import { calculatePriority, getEffortLabel, getPriorityLabel } from '$lib/services/priority';
 	import { modalStore } from '$lib/stores/modalStore';
-	import TimeRemaining from './TimeRemaining.svelte';
+	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
 
 	interface Props {
 		task: Task;

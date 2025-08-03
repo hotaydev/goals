@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { SMARTCriteria, TargetDate } from '$lib/models/types';
-	import EmojiSelector from './EmojiSelector.svelte';
+	import EmojiSelector from '$lib/components/EmojiSelector.svelte';
 
 	interface Props {
 		title: string;

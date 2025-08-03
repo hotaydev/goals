@@ -3,9 +3,9 @@
 	import type { Milestone } from '$lib/models/types';
 	import { calculatePriority, getEffortLabel, getPriorityLabel } from '$lib/services/priority';
 	import { getMilestoneCompletionPercentage } from '$lib/services/percentage';
-	import ProgressBar from './ProgressBar.svelte';
-	import TaskList from './TaskList.svelte';
-	import TimeRemaining from './TimeRemaining.svelte';
+	import ProgressBar from '$lib/components/ProgressBar.svelte';
+	import TaskList from '$lib/components/Tasks/TaskList.svelte';
+	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
 	import { modalStore } from '$lib/stores/modalStore';
 
 	let { milestone }: { milestone: Milestone } = $props();

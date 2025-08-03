@@ -1,10 +1,16 @@
 <script lang="ts">
-	import type { Goal, GoalCardProps } from '$lib/models/types';
+	import type { Goal } from '$lib/models/types';
 	import { getGoalCompletionPercentage } from '$lib/services/percentage';
-	import ProgressBar from './ProgressBar.svelte';
-	import TimeRemaining from './TimeRemaining.svelte';
+	import ProgressBar from '$lib/components/ProgressBar.svelte';
+	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
 
-	let { goal, onclick }: GoalCardProps = $props();
+	let {
+		goal,
+		onclick
+	}: {
+		goal: Goal;
+		onclick?: () => void;
+	} = $props();
 
 	// Format the target date
 	function formatTargetDate(targetDate: Goal['targetDate']): string {

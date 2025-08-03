@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Upload, Target, Flag, CheckSquare } from '@lucide/svelte';
-	import Modal from './Modal.svelte';
+	import Modal from '$lib/components/Modal.svelte';
 
 	interface Props {
 		isOpen: boolean;

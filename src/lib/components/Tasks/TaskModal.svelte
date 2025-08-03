@@ -4,13 +4,13 @@
 	import { formatTargetDate } from '$lib/services/date';
 	import { goalsStore } from '$lib/stores/goalsStore';
 	import { modalStore, type ModalMode } from '$lib/stores/modalStore';
-	import Modal from './Modal.svelte';
-	import SMARTSection from './SMARTSection.svelte';
-	import TaskForm, { type TaskFormData } from './TaskForm.svelte';
-	import TimeRemaining from './TimeRemaining.svelte';
-	import StatusDropdown from './StatusDropdown.svelte';
-	import ActionDropdown from './ActionDropdown.svelte';
-	import EvidenceList from './EvidenceList.svelte';
+	import Modal from '$lib/components/Modal.svelte';
+	import SMARTSection from '$lib/components/SMARTSection.svelte';
+	import TaskForm, { type TaskFormData } from '$lib/components/Tasks/TaskForm.svelte';
+	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
+	import StatusDropdown from '$lib/components/Tasks/StatusDropdown.svelte';
+	import ActionDropdown from '$lib/components/ActionDropdown.svelte';
+	import EvidenceList from '$lib/components/Evidences/EvidenceList.svelte';
 
 	interface Props {
 		task: Task | null;

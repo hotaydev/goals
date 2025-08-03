@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Task, Milestone } from '$lib/models/types';
-	import TaskCard from './TaskCard.svelte';
+	import { TaskCard } from '$lib/components/Tasks';
 
 	interface Props {
 		title: string;

@@ -67,8 +67,3 @@ export interface Goal {
 	createdAt: string;
 	updatedAt: string;
 }
-
-export interface GoalCardProps {
-	goal: Goal;
-	onclick?: () => void;
-}

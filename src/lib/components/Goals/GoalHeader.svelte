@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Goal } from '$lib/models/types';
 	import { getGoalCompletionPercentage } from '$lib/services/percentage';
-	import ProgressBar from './ProgressBar.svelte';
-	import TimeRemaining from './TimeRemaining.svelte';
+	import ProgressBar from '$lib/components/ProgressBar.svelte';
+	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
 
 	let { goal }: { goal: Goal } = $props();
 
