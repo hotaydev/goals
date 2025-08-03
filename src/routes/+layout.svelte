@@ -2,8 +2,10 @@
 	import '../app.css';
 	import { Target, CheckSquare, Search } from '@lucide/svelte';
 	import ThemeSwitcher from '$lib/components/ThemeSwitcher.svelte';
-	import ImportExportDropdown from '$lib/components/ImportExportDropdown.svelte';
+	import ImportExportDropdown from '$lib/components/Backup/ImportExportDropdown.svelte';
 	import CommandPalette from '$lib/components/CommandPalette.svelte';
+	import { locales, localizeHref } from '$lib/paraglide/runtime';
+	import { page } from '$app/state';
 
 	let { children } = $props();
 	let commandPaletteRef: CommandPalette;
@@ -46,6 +48,13 @@
 		{@render children()}
 	</div>
 </main>
+
+<!-- Used for SSG: https://inlang.com/m/gerre34r/library-inlang-paraglideJs/sveltekit#static-site-generation-ssg -->
+<div style="display:none">
+	{#each locales as locale (locale)}
+		<a href={localizeHref(page.url.pathname, { locale })}>{locale}</a>
+	{/each}
+</div>
 
 <!-- Command Palette -->
 <CommandPalette bind:this={commandPaletteRef} />
