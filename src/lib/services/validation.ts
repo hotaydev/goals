@@ -1,4 +1,5 @@
 import type { Goal, TaskStatus, ValueEffortLevel } from '../models/types';
+import { m } from '$lib/paraglide/messages';
 
 export interface ValidationResult {
 	isValid: boolean;
@@ -37,7 +38,7 @@ function isNumber(value: unknown): value is number {
  */
 function isValidString(value: unknown, fieldName: string): string | null {
 	if (!isString(value) || value.trim() === '') {
-		return `${fieldName} must be a non-empty string`;
+		return m.validation_error_required_string({ fieldName });
 	}
 	return null;
 }
@@ -47,12 +48,12 @@ function isValidString(value: unknown, fieldName: string): string | null {
  */
 function isValidDateString(value: unknown, fieldName: string): string | null {
 	if (!isString(value)) {
-		return `${fieldName} must be a string`;
+		return m.validation_error_must_be_string({ fieldName });
 	}
 
 	const date = new Date(value);
 	if (isNaN(date.getTime())) {
-		return `${fieldName} must be a valid ISO date string`;
+		return m.validation_error_must_be_valid_iso_date_string({ fieldName });
 	}
 	return null;
 }
@@ -62,7 +63,7 @@ function isValidDateString(value: unknown, fieldName: string): string | null {
  */
 function isValidUrl(value: string, fieldName: string): string | null {
 	if (!URL_REGEX.test(value)) {
-		return `${fieldName} must be a valid URL`;
+		return m.validation_error_must_be_valid_url({ fieldName });
 	}
 	return null;
 }
@@ -76,7 +77,10 @@ function isValidEnum<T extends string>(
 	fieldName: string
 ): string | null {
 	if (!isString(value) || !(allowedValues as readonly string[]).includes(value)) {
-		return `${fieldName} must be one of: ${allowedValues.join(', ')}`;
+		return m.validation_error_must_be_one_of({
+			fieldName,
+			allowedValues: allowedValues.join(', ')
+		});
 	}
 	return null;
 }
@@ -86,7 +90,7 @@ function isValidEnum<T extends string>(
  */
 function isValidYear(value: unknown, fieldName: string): string | null {
 	if (!isNumber(value) || value < 1900 || value > 3000) {
-		return `${fieldName} must be a valid year number between 1900 and 3000`;
+		return m.validation_error_must_be_valid_year_number({ fieldName });
 	}
 	return null;
 }
@@ -96,7 +100,7 @@ function isValidYear(value: unknown, fieldName: string): string | null {
  */
 function isValidMonth(value: unknown, fieldName: string): string | null {
 	if (!isNumber(value) || value < 1 || value > 12) {
-		return `${fieldName} must be a number between 1 and 12`;
+		return m.validation_error_must_be_valid_month_number({ fieldName });
 	}
 	return null;
 }
@@ -106,7 +110,7 @@ function isValidMonth(value: unknown, fieldName: string): string | null {
  */
 function isValidDay(value: unknown, fieldName: string): string | null {
 	if (!isNumber(value) || value < 1 || value > 31) {
-		return `${fieldName} must be a number between 1 and 31`;
+		return m.validation_error_must_be_valid_day_number({ fieldName });
 	}
 	return null;
 }
@@ -123,6 +127,23 @@ function validateRequiredStringFields(
 	for (const field of fields) {
 		const error = isValidString(obj[field], `${prefix}.${field}`);
 		if (error) errors.push(error);
+	}
+	return errors;
+}
+
+/**
+ * Validates required string fields on an object
+ */
+function validateRequiredStringFieldsAsEmptyString(
+	obj: Record<string, unknown>,
+	fields: string[],
+	prefix: string
+): string[] {
+	const errors: string[] = [];
+	for (const field of fields) {
+		if (!isString(obj[field])) {
+			errors.push(m.validation_error_required_string({ fieldName: `${prefix}.${field}` }));
+		}
 	}
 	return errors;
 }
@@ -168,12 +189,12 @@ function validateSMARTCriteria(smart: unknown, prefix: string): string[] {
 	const errors: string[] = [];
 
 	if (!isObject(smart)) {
-		errors.push(`${prefix}.smart must be an object`);
+		errors.push(m.validation_error_must_be_object({ fieldName: `${prefix}.smart` }));
 		return errors;
 	}
 
 	const fields = ['specific', 'measurable', 'achievable', 'relevant', 'timeBound'];
-	errors.push(...validateRequiredStringFields(smart, fields, `${prefix}.smart`));
+	errors.push(...validateRequiredStringFieldsAsEmptyString(smart, fields, `${prefix}.smart`));
 
 	return errors;
 }
@@ -185,12 +206,13 @@ function validateEvidence(evidence: unknown, prefix: string): string[] {
 	const errors: string[] = [];
 
 	if (!isObject(evidence)) {
-		errors.push(`${prefix} must be an object`);
+		errors.push(m.validation_error_must_be_object({ fieldName: `${prefix}` }));
 		return errors;
 	}
 
 	// Required string fields
-	errors.push(...validateRequiredStringFields(evidence, ['id', 'title', 'content'], prefix));
+	errors.push(...validateRequiredStringFields(evidence, ['id', 'title'], prefix));
+	errors.push(...validateRequiredStringFieldsAsEmptyString(evidence, ['content'], prefix));
 
 	// Optional string fields
 	errors.push(...validateOptionalStringFields(evidence, ['icon'], prefix));
@@ -218,7 +240,7 @@ function validateTargetDate(targetDate: unknown, prefix: string): string[] {
 	const errors: string[] = [];
 
 	if (!isObject(targetDate)) {
-		errors.push(`${prefix}.targetDate must be an object`);
+		errors.push(m.validation_error_must_be_object({ fieldName: `${prefix}.targetDate` }));
 		return errors;
 	}
 
@@ -266,7 +288,7 @@ function validateArray(
 	const errors: string[] = [];
 
 	if (!isArray(array)) {
-		errors.push(`${prefix} must be an array`);
+		errors.push(m.validation_error_must_be_array({ fieldName: prefix }));
 		return errors;
 	}
 
@@ -284,12 +306,13 @@ function validateTask(task: unknown, prefix: string): string[] {
 	const errors: string[] = [];
 
 	if (!isObject(task)) {
-		errors.push(`${prefix} must be an object`);
+		errors.push(m.validation_error_must_be_object({ fieldName: prefix }));
 		return errors;
 	}
 
 	// Required string fields
-	errors.push(...validateRequiredStringFields(task, ['id', 'title', 'description'], prefix));
+	errors.push(...validateRequiredStringFields(task, ['id', 'title'], prefix));
+	errors.push(...validateRequiredStringFieldsAsEmptyString(task, ['description'], prefix));
 
 	// Optional string fields
 	errors.push(...validateOptionalStringFields(task, ['icon'], prefix));
@@ -321,12 +344,13 @@ function validateMilestone(milestone: unknown, prefix: string): string[] {
 	const errors: string[] = [];
 
 	if (!isObject(milestone)) {
-		errors.push(`${prefix} must be an object`);
+		errors.push(m.validation_error_must_be_object({ fieldName: prefix }));
 		return errors;
 	}
 
 	// Required string fields
-	errors.push(...validateRequiredStringFields(milestone, ['id', 'title', 'description'], prefix));
+	errors.push(...validateRequiredStringFields(milestone, ['id', 'title'], prefix));
+	errors.push(...validateRequiredStringFieldsAsEmptyString(milestone, ['description'], prefix));
 
 	// Optional string fields
 	errors.push(...validateOptionalStringFields(milestone, ['icon'], prefix));
@@ -357,12 +381,13 @@ function validateGoal(goal: unknown, prefix: string): string[] {
 	const errors: string[] = [];
 
 	if (!isObject(goal)) {
-		errors.push(`${prefix} must be an object`);
+		errors.push(m.validation_error_must_be_object({ fieldName: prefix }));
 		return errors;
 	}
 
 	// Required string fields
-	errors.push(...validateRequiredStringFields(goal, ['id', 'title', 'description'], prefix));
+	errors.push(...validateRequiredStringFields(goal, ['id', 'title'], prefix));
+	errors.push(...validateRequiredStringFieldsAsEmptyString(goal, ['description'], prefix));
 
 	// Optional string fields
 	errors.push(...validateOptionalStringFields(goal, ['icon'], prefix));
@@ -390,7 +415,7 @@ export function validateImportData(jsonData: unknown): ImportValidationResult {
 	if (!isArray(jsonData)) {
 		return {
 			isValid: false,
-			errors: ['Data must be a "goals" array']
+			errors: [m.validation_error_must_be_array({ fieldName: 'goals' })]
 		};
 	}
 

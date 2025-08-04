@@ -2,6 +2,7 @@
 	import { X } from '@lucide/svelte';
 	import type { Snippet } from 'svelte';
 	import { Confetti } from 'svelte-confetti';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		isOpen: boolean;
@@ -41,7 +42,7 @@
 			{#if title}
 				<div class="modal-header">
 					<h2>{title}</h2>
-					<button class="modal-close" onclick={onClose} title="Close modal">
+					<button class="modal-close" onclick={onClose} title={m.close_modal()}>
 						<X size={20} />
 					</button>
 				</div>

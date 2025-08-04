@@ -4,8 +4,10 @@
 	import ThemeSwitcher from '$lib/components/ThemeSwitcher.svelte';
 	import ImportExportDropdown from '$lib/components/Backup/ImportExportDropdown.svelte';
 	import CommandPalette from '$lib/components/CommandPalette.svelte';
+	import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
 	import { locales, localizeHref } from '$lib/paraglide/runtime';
 	import { page } from '$app/state';
+	import { m } from '$lib/paraglide/messages';
 
 	let { children } = $props();
 	let commandPaletteRef: CommandPalette;
@@ -24,17 +26,18 @@
 			<!-- Logo -->
 			<a href="/" class="logo">
 				<Target size={28} class="logo-icon" />
-				<span>Goals</span>
+				<span>{m.title()}</span>
 			</a>
 
 			<!-- Controls -->
 			<div class="controls">
-				<button class="btn btn-icon" title="Search (⌘K)" onclick={openCommandPalette}>
+				<button class="btn btn-icon" title={m.search()} onclick={openCommandPalette}>
 					<Search size={20} />
 				</button>
 				<a href="/tasks" class="btn btn-icon">
 					<CheckSquare size={20} />
 				</a>
+				<LanguageSwitcher />
 				<ImportExportDropdown />
 				<ThemeSwitcher />
 			</div>

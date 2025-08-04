@@ -3,6 +3,7 @@
 	import { calculatePriority, getEffortLabel, getPriorityLabel } from '$lib/services/priority';
 	import { modalStore } from '$lib/stores/modalStore';
 	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		task: Task;
@@ -26,7 +27,7 @@
 	onkeydown={(e) => e.key === 'Enter' && handleTaskClick()}
 	role="button"
 	tabindex="0"
-	title="Click to view task details"
+	title={m.click_to_view_task_details()}
 >
 	<div class="card-header">
 		{#if task.icon}

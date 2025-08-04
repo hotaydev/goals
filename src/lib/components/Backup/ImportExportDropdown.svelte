@@ -4,6 +4,7 @@
 	import { goalsStore } from '$lib/stores/goalsStore';
 	import { modalStore } from '$lib/stores/modalStore';
 	import { validateImportData, type ImportValidationResult } from '$lib/services/validation';
+	import { m } from '$lib/paraglide/messages';
 
 	let isOpen = $state(false);
 	let dropdownElement: HTMLDivElement;
@@ -32,7 +33,7 @@
 			document.body.removeChild(link);
 			URL.revokeObjectURL(url);
 		} catch (error) {
-			alert('Failed to export goals. Please try again.');
+			alert(m.backup_export_failed_to_export());
 			console.error('Export error:', error);
 		}
 		closeDropdown();
@@ -50,7 +51,7 @@
 		if (!file) return;
 
 		if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
-			alert('Please select a valid JSON file.');
+			alert(m.backup_import_invalid_file());
 			return;
 		}
 
@@ -61,7 +62,7 @@
 				const validation: ImportValidationResult = validateImportData(jsonData);
 
 				if (!validation.isValid) {
-					const errorMessage = `Invalid file format:\n\n${validation.errors.join('\n')}`;
+					const errorMessage = `${m.backup_import_invalid_file_format()}\n\n${validation.errors.join('\n')}`;
 					alert(errorMessage);
 					return;
 				}
@@ -81,8 +82,8 @@
 
 					// Show confirmation modal
 					modalStore.openImportConfirmationModal(
-						'Import Goals',
-						'This will replace all your current goals with the imported data. This action cannot be undone.',
+						m.backup_import_modal_title(),
+						m.backup_import_modal_message(),
 						goalsCount,
 						milestonesCount,
 						tasksCount,
@@ -103,7 +104,7 @@
 					window.location.reload();
 				}
 			} catch (error) {
-				alert("Failed to read the JSON file. Please ensure it's a valid JSON format.");
+				alert(m.backup_import_failed_to_read_file());
 				console.error('Import error:', error);
 			}
 		};
@@ -131,8 +132,8 @@
 	<button
 		class="btn btn-icon"
 		onclick={toggleDropdown}
-		title="Import/Export Goals"
-		aria-label="Import or Export Goals"
+		title={m.backup_import_or_export_goals()}
+		aria-label={m.backup_import_or_export_goals()}
 	>
 		<Archive size={20} />
 	</button>
@@ -141,11 +142,11 @@
 		<div class="dropdown-menu">
 			<button class="dropdown-item" onclick={handleExport}>
 				<Download size={16} />
-				Export Goals
+				{m.export_goals()}
 			</button>
 			<button class="dropdown-item" onclick={handleImportClick}>
 				<Upload size={16} />
-				Import Goals
+				{m.import_goals()}
 			</button>
 		</div>
 	{/if}

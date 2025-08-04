@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { SMARTCriteria } from '$lib/models/types';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		smart: SMARTCriteria;
@@ -12,11 +13,11 @@
 	let isExpanded = $state(defaultExpanded);
 
 	const smartLabels = {
-		specific: 'Specific',
-		measurable: 'Measurable',
-		achievable: 'Achievable',
-		relevant: 'Relevant',
-		timeBound: 'Time-Bound'
+		specific: m.smart_label_specific(),
+		measurable: m.smart_label_measurable(),
+		achievable: m.smart_label_achievable(),
+		relevant: m.smart_label_relevant(),
+		timeBound: m.smart_label_time_bound()
 	};
 
 	function toggleExpanded() {
@@ -26,7 +27,7 @@
 
 <div class="smart-section" class:compact>
 	<button type="button" class="smart-header-button" onclick={toggleExpanded}>
-		<h3>SMART Goals Criteria</h3>
+		<h3>{m.smart_goals_criteria()}</h3>
 		<div class="expand-icon" class:expanded={isExpanded}>
 			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 				<polyline points="6,9 12,15 18,9"></polyline>

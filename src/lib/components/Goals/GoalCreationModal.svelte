@@ -2,6 +2,7 @@
 	import { goalsStore } from '$lib/stores/goalsStore';
 	import Modal from '$lib/components/Modal.svelte';
 	import GoalForm, { type GoalFormData } from './GoalForm.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		isOpen: boolean;
@@ -40,7 +41,7 @@
 			onClose();
 		} catch (error) {
 			console.error('Failed to create goal:', error);
-			alert('Failed to create goal. Please try again.');
+			alert(m.failed_to_create_goal());
 		} finally {
 			isSubmitting = false;
 		}
@@ -51,7 +52,7 @@
 	}
 </script>
 
-<Modal {isOpen} {onClose} title="Create New Goal">
+<Modal {isOpen} {onClose} title={m.create_new_goal()}>
 	<div class="goal-creation-modal-content">
 		<GoalForm
 			title={defaultGoal.title}

@@ -6,6 +6,7 @@
 	import { calculateTimeRemaining } from '$lib/services/date';
 	import type { Task, Milestone } from '$lib/models/types';
 	import { calculatePriority } from '$lib/services/priority';
+	import { m } from '$lib/paraglide/messages';
 
 	// Get all tasks with their milestone information
 	const allTasksWithMilestones = getAllTasksWithMilestones();
@@ -14,25 +15,25 @@
 	const columns = [
 		{
 			status: 'backlog',
-			title: 'Backlog',
+			title: m.kanban_columns_backlog(),
 			icon: '📋',
 			color: 'var(--color-text-muted)'
 		},
 		{
 			status: 'planned',
-			title: 'Planned',
+			title: m.kanban_columns_planned(),
 			icon: '📅',
 			color: 'var(--color-primary)'
 		},
 		{
 			status: 'in_progress',
-			title: 'In Progress',
+			title: m.kanban_columns_in_progress(),
 			icon: '⚡',
 			color: 'var(--color-warning)'
 		},
 		{
 			status: 'done',
-			title: 'Done',
+			title: m.kanban_columns_done(),
 			icon: '✅',
 			color: 'var(--color-success)'
 		}
@@ -82,9 +83,9 @@
 				<a href="/" class="btn btn-icon">
 					<ArrowLeft size={20} />
 				</a>
-				<h1>Tasks Board</h1>
+				<h1>{m.tasks_board()}</h1>
 			</div>
-			<p>Manage and organize your tasks in a comprehensive board view</p>
+			<p>{m.tasks_board_description()}</p>
 		</div>
 	</div>
 

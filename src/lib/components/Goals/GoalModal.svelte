@@ -3,6 +3,7 @@
 	import { goalsStore } from '$lib/stores/goalsStore';
 	import Modal from '$lib/components/Modal.svelte';
 	import GoalForm, { type GoalFormData } from './GoalForm.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		goal: Goal;
@@ -32,7 +33,7 @@
 			onClose();
 		} catch (error) {
 			console.error('Failed to save goal:', error);
-			alert('Failed to save goal. Please try again.');
+			alert(m.failed_to_save_goal());
 		} finally {
 			isSubmitting = false;
 		}
@@ -43,7 +44,7 @@
 	}
 </script>
 
-<Modal {isOpen} {onClose} title="Edit Goal">
+<Modal {isOpen} {onClose} title={m.edit_goal()}>
 	<div class="goal-modal-content">
 		<!-- Edit Mode Only -->
 		<GoalForm

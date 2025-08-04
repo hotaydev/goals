@@ -7,6 +7,7 @@
 	import TaskList from '$lib/components/Tasks/TaskList.svelte';
 	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
 	import { modalStore } from '$lib/stores/modalStore';
+	import { m } from '$lib/paraglide/messages';
 
 	let { milestone }: { milestone: Milestone } = $props();
 
@@ -57,9 +58,9 @@
 		</button>
 
 		<div class="milestone-actions">
-			<button class="smart-button" onclick={openModal} title="View SMART objectives">
+			<button class="smart-button" onclick={openModal} title={m.view_smart_objectives()}>
 				<Target size={16} />
-				Details
+				{m.details()}
 			</button>
 		</div>
 	</div>

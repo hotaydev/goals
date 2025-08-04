@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		value?: string;
@@ -74,7 +75,7 @@
 			class="emoji-dropdown-button"
 			onclick={toggleDropdown}
 			{disabled}
-			aria-label="Select emoji"
+			aria-label={m.select_emoji()}
 		>
 			<svg
 				width="16"

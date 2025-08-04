@@ -4,6 +4,7 @@
 	import { targetDateToDate } from '$lib/services/date';
 	import { modalStore } from '$lib/stores/modalStore';
 	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		tasks: Task[];
@@ -37,7 +38,7 @@
 <div class="task-list">
 	{#if sortedTasks.length === 0}
 		<div class="empty-state">
-			<p>No tasks yet. Create your first task to get started!</p>
+			<p>{m.no_tasks_yet()}</p>
 		</div>
 	{:else}
 		{#each sortedTasks as task (task.id)}
@@ -64,7 +65,11 @@
 
 				<div class="task-badges">
 					<div class="status-badge status-{task.status}">
-						{task.status.replace('_', ' ')}
+						{task.status === 'planned'
+							? m.planned()
+							: task.status === 'in_progress'
+								? m.in_progress()
+								: m.done()}
 					</div>
 				</div>
 

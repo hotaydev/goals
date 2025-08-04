@@ -3,6 +3,7 @@
 	import { Search, Command } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { goals } from '$lib/stores/goalsStore';
+	import { m } from '$lib/paraglide/messages';
 
 	interface SearchResult {
 		id: string;
@@ -179,13 +180,13 @@
 	function getTypeLabel(type: string) {
 		switch (type) {
 			case 'goal':
-				return 'Goal';
+				return m.goal();
 			case 'milestone':
-				return 'Milestone';
+				return m.milestone();
 			case 'task':
-				return 'Task';
+				return m.task();
 			default:
-				return 'Item';
+				return m.item();
 		}
 	}
 
@@ -224,7 +225,7 @@
 				<input
 					id="command-palette-input"
 					type="text"
-					placeholder="Search goals, milestones, and tasks..."
+					placeholder={m.search_goals_milestones_tasks()}
 					bind:value={query}
 					class="command-palette-input"
 				/>
@@ -238,7 +239,7 @@
 			<div class="command-palette-results">
 				{#if searchResults.length === 0}
 					<div class="no-results">
-						<p>No results found</p>
+						<p>{m.no_results_found()}</p>
 					</div>
 				{:else}
 					{#each searchResults as result, index (result.id)}

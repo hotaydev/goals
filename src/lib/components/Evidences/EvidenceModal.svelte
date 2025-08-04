@@ -4,6 +4,7 @@
 	import { modalStore } from '$lib/stores/modalStore';
 	import Modal from '$lib/components/Modal.svelte';
 	import EvidenceForm from './EvidenceForm.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		isOpen: boolean;
@@ -39,7 +40,7 @@
 
 				const goal = currentData!.find((g: Goal) => g.id === taskLocation.goalId);
 				const milestone = goal?.milestones.find(
-					(m: Milestone) => m.id === taskLocation.milestoneId
+					(milestone: Milestone) => milestone.id === taskLocation.milestoneId
 				);
 				const task = milestone?.tasks.find((t: Task) => t.id === context.taskId);
 				return task?.evidences?.find((e: Evidence) => e.id === context.editingEvidenceId) || null;
@@ -52,7 +53,9 @@
 			unsubscribe();
 
 			const goal = currentData!.find((g: Goal) => g.id === context.goalId);
-			const milestone = goal?.milestones.find((m: Milestone) => m.id === context.milestoneId);
+			const milestone = goal?.milestones.find(
+				(milestone: Milestone) => milestone.id === context.milestoneId
+			);
 			return (
 				milestone?.evidences?.find((e: Evidence) => e.id === context.editingEvidenceId) || null
 			);
@@ -110,7 +113,7 @@
 	}
 </script>
 
-<Modal {isOpen} {onClose} title={context?.editingEvidenceId ? 'Edit Evidence' : 'Add Evidence'}>
+<Modal {isOpen} {onClose} title={context?.editingEvidenceId ? m.edit_evidence() : m.add_evidence()}>
 	{#if context}
 		<div class="evidence-modal-content">
 			<EvidenceForm
@@ -122,7 +125,7 @@
 		</div>
 	{:else}
 		<div class="error-state">
-			<p>Evidence context not found</p>
+			<p>{m.evidence_context_not_found()}</p>
 		</div>
 	{/if}
 </Modal>

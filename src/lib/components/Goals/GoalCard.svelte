@@ -3,6 +3,7 @@
 	import { getGoalCompletionPercentage } from '$lib/services/percentage';
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
 	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	let {
 		goal,
@@ -52,7 +53,7 @@
 	onkeydown={handleKeydown}
 	tabindex="0"
 	role="button"
-	aria-label="View goal: {goal.title}"
+	aria-label={m.view_goal({ title: goal.title })}
 >
 	<div class="goal-header">
 		<div class="goal-icon">
@@ -69,7 +70,7 @@
 			<TimeRemaining
 				targetDate={goal.targetDate}
 				size="medium"
-				extraText={`Expected by ${formatTargetDate(goal.targetDate)}`}
+				extraText={m.expected_by({ date: formatTargetDate(goal.targetDate) })}
 			/>
 		</div>
 

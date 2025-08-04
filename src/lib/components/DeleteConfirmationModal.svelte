@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { AlertTriangle } from '@lucide/svelte';
 	import Modal from './Modal.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		isOpen: boolean;
@@ -43,6 +44,10 @@
 			handleCancel();
 		}
 	}
+
+	const itemTypeLabel = $derived(
+		itemType === 'goal' ? m.goal() : itemType === 'milestone' ? m.milestone() : m.task()
+	);
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
@@ -54,7 +59,7 @@
 				<AlertTriangle size={48} />
 			</div>
 			<div class="warning-text">
-				<h3>Delete {itemType}</h3>
+				<h3>{m.delete()} {itemTypeLabel}</h3>
 				<p class="item-name">"{itemName}"</p>
 			</div>
 		</div>
@@ -70,10 +75,10 @@
 				disabled={isProcessing}
 				type="button"
 			>
-				Cancel
+				{m.cancel()}
 			</button>
 			<button class="btn btn-danger" onclick={handleConfirm} disabled={isProcessing} type="button">
-				{isProcessing ? 'Deleting...' : `Delete ${itemType}`}
+				{isProcessing ? m.deleting() : m.delete()}
 			</button>
 		</div>
 	</div>

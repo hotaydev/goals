@@ -7,6 +7,7 @@
 	import type { Goal } from '$lib/models/types';
 	import { goalsStore, goals } from '$lib/stores/goalsStore';
 	import { modalStore } from '$lib/stores/modalStore';
+	import { m } from '$lib/paraglide/messages';
 
 	let loading = $state(true);
 
@@ -40,26 +41,23 @@
 	{:else if $goals.length === 0}
 		<div class="empty-state">
 			<div class="empty-icon">🎯</div>
-			<h3>No goals yet</h3>
-			<p>Create your first long-term goal to get started on your journey.</p>
+			<h3>{m.no_goals_yet()}</h3>
+			<p>{m.no_goals_yet_description()}</p>
 			<button class="btn btn-primary" onclick={handleAddGoal}>
 				<Plus size={20} />
-				Create Your First Goal
+				{m.create_first_goal()}
 			</button>
 		</div>
 	{:else}
 		<!-- Page Header -->
 		<div class="page-header">
 			<div class="header-content">
-				<h1>My Goals</h1>
-				<p>
-					Track your long-term goals with SMART methodology and value vs effort matrix
-					prioritization
-				</p>
+				<h1>{m.my_goals()}</h1>
+				<p>{m.my_goals_description()}</p>
 			</div>
 			<button class="btn btn-primary" onclick={handleAddGoal}>
 				<Plus size={20} />
-				Add New Goal
+				{m.add_new_goal()}
 			</button>
 		</div>
 		<div class="goals-grid">

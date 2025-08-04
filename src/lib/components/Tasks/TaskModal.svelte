@@ -11,6 +11,7 @@
 	import StatusDropdown from '$lib/components/Tasks/StatusDropdown.svelte';
 	import ActionDropdown from '$lib/components/ActionDropdown.svelte';
 	import EvidenceList from '$lib/components/Evidences/EvidenceList.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		task: Task | null;
@@ -54,10 +55,10 @@
 			isSubmitting = true;
 
 			if (mode === 'create') {
-				if (!milestoneId) throw new Error('Milestone ID is required for creating tasks');
+				if (!milestoneId) throw new Error(m.milestone_id_required_for_creating_tasks());
 
 				const goalLocation = goalsStore.findMilestoneLocation(milestoneId);
-				if (!goalLocation) throw new Error('Goal not found');
+				if (!goalLocation) throw new Error(m.goal_not_found());
 
 				goalsStore.addTask(goalLocation, milestoneId, {
 					...formData,
@@ -67,7 +68,7 @@
 				modalStore.closeTaskModal();
 			} else if (mode === 'edit' && task) {
 				const location = goalsStore.findTaskLocation(task.id);
-				if (!location) throw new Error('Task location not found');
+				if (!location) throw new Error(m.task_location_not_found());
 
 				const updatedTask: Task = {
 					...task,
@@ -87,7 +88,7 @@
 			}
 		} catch (error) {
 			console.error('Failed to save task:', error);
-			alert('Failed to save task. Please try again.');
+			alert(m.failed_to_save_task());
 		} finally {
 			isSubmitting = false;
 		}
@@ -174,7 +175,11 @@
 <Modal
 	{isOpen}
 	{onClose}
-	title={mode === 'create' ? 'Create New Task' : mode === 'edit' ? 'Edit Task' : 'Task Details'}
+	title={mode === 'create'
+		? m.create_new_task()
+		: mode === 'edit'
+			? m.edit_task()
+			: m.task_details()}
 	{showConfetti}
 >
 	<div class="task-modal-content">
@@ -219,7 +224,7 @@
 						<ActionDropdown
 							onEdit={handleEdit}
 							onDelete={handleDelete}
-							deleteConfirmMessage={`Are you sure you want to delete the task "${task.title}"? This action cannot be undone.`}
+							deleteConfirmMessage={m.are_you_sure_you_want_to_delete_this_task()}
 							itemName={task.title}
 							itemType="task"
 						/>
@@ -231,7 +236,7 @@
 						<TimeRemaining
 							targetDate={task.targetDate}
 							size="medium"
-							extraText={`Expected by ${formatTargetDate(task.targetDate)}`}
+							extraText={m.expected_by({ date: formatTargetDate(task.targetDate) })}
 						/>
 					</div>
 				</div>
@@ -249,7 +254,7 @@
 			/>
 		{:else}
 			<div class="error-state">
-				<p>Task not found</p>
+				<p>{m.task_not_found()}</p>
 			</div>
 		{/if}
 	</div>

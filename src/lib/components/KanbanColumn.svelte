@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Task, Milestone } from '$lib/models/types';
 	import { TaskCard } from '$lib/components/Tasks';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		title: string;
@@ -28,7 +29,7 @@
 	<div class="column-content">
 		{#if tasks.length === 0}
 			<div class="empty-column">
-				<p>No tasks</p>
+				<p>{m.no_tasks()}</p>
 			</div>
 		{:else}
 			{#each tasks as { task, milestone } (task.id)}

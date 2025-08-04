@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Evidence } from '$lib/models/types';
 	import { ExternalLink, FileText, Save, X } from '@lucide/svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		evidence?: Evidence | null; // null for create, Evidence for edit
@@ -23,18 +24,18 @@
 		const newErrors: Record<string, string> = {};
 
 		if (!title.trim()) {
-			newErrors.title = 'Title is required';
+			newErrors.title = m.validation_required_title();
 		}
 
 		if (!content.trim()) {
-			newErrors.content = 'Content is required';
+			newErrors.content = m.validation_required_content();
 		}
 
 		if (type === 'link' && content.trim()) {
 			// Basic URL validation
 			const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
 			if (!urlRegex.test(content.trim())) {
-				newErrors.content = 'Please enter a valid URL (e.g., example.com or https://example.com)';
+				newErrors.content = m.validation_invalid_url();
 			}
 		}
 
@@ -77,7 +78,7 @@
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <div class="evidence-form" role="form" onkeydown={handleKeydown}>
 	<div class="form-header">
-		<h4>{evidence ? 'Edit' : 'Add'} Evidence</h4>
+		<h4>{evidence ? m.edit_evidence() : m.add_evidence()}</h4>
 		<div class="type-selector">
 			<button
 				class="type-btn"
@@ -86,7 +87,7 @@
 				type="button"
 			>
 				<FileText size={16} />
-				Note
+				{m.note()}
 			</button>
 			<button
 				class="type-btn"
@@ -95,19 +96,19 @@
 				type="button"
 			>
 				<ExternalLink size={16} />
-				Link
+				{m.link()}
 			</button>
 		</div>
 	</div>
 
 	<form class="form-fields" onsubmit={handleSubmit}>
 		<div class="field-group">
-			<label for="evidence-title">Title</label>
+			<label for="evidence-title">{m.title_string()}</label>
 			<input
 				id="evidence-title"
 				type="text"
 				bind:value={title}
-				placeholder={type === 'link' ? 'Link description' : 'Note title'}
+				placeholder={type === 'link' ? m.link_description() : m.note_title()}
 				class:error={errors.title}
 				disabled={isSubmitting}
 			/>
@@ -118,7 +119,7 @@
 
 		<div class="field-group">
 			<label for="evidence-content">
-				{type === 'link' ? 'URL' : 'Content'}
+				{type === 'link' ? 'URL' : m.content()}
 			</label>
 			{#if type === 'link'}
 				<input
@@ -126,7 +127,7 @@
 					type="text"
 					bind:value={content}
 					oninput={handleContentChange}
-					placeholder="https://example.com or example.com"
+					placeholder={`https://example.com ${m.or()} example.com`}
 					class:error={errors.content}
 					disabled={isSubmitting}
 				/>
@@ -135,7 +136,7 @@
 					id="evidence-content"
 					bind:value={content}
 					oninput={handleContentChange}
-					placeholder="Enter your note content..."
+					placeholder={m.enter_your_note_content()}
 					rows="4"
 					class:error={errors.content}
 					disabled={isSubmitting}
@@ -149,11 +150,11 @@
 		<div class="form-actions">
 			<button type="button" class="btn secondary" onclick={onCancel} disabled={isSubmitting}>
 				<X size={16} />
-				Cancel
+				{m.cancel()}
 			</button>
 			<button type="submit" class="btn primary" disabled={isSubmitting}>
 				<Save size={16} />
-				{isSubmitting ? 'Saving...' : 'Save'}
+				{isSubmitting ? m.saving() : m.save()}
 			</button>
 		</div>
 	</form>

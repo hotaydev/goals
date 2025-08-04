@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Upload, Target, Flag, CheckSquare } from '@lucide/svelte';
 	import Modal from '$lib/components/Modal.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		isOpen: boolean;
@@ -56,8 +57,8 @@
 				<Upload size={48} />
 			</div>
 			<div class="import-text">
-				<h3>Import Goals Data</h3>
-				<p class="action-description">Replace current data with imported file</p>
+				<h3>{m.backup_import_confirmation_title()}</h3>
+				<p class="action-description">{m.backup_import_confirmation_message()}</p>
 			</div>
 		</div>
 
@@ -66,22 +67,22 @@
 		</div>
 
 		<div class="stats-section">
-			<h4>File contains:</h4>
+			<h4>{m.backup_import_confirmation_file_contains()}</h4>
 			<div class="stats-grid">
 				<div class="stat-item">
 					<Target size={20} />
 					<span class="stat-number">{goalsCount}</span>
-					<span class="stat-label">Goal{goalsCount !== 1 ? 's' : ''}</span>
+					<span class="stat-label">{goalsCount !== 1 ? m.goals() : m.goal()}</span>
 				</div>
 				<div class="stat-item">
 					<Flag size={20} />
 					<span class="stat-number">{milestonesCount}</span>
-					<span class="stat-label">Milestone{milestonesCount !== 1 ? 's' : ''}</span>
+					<span class="stat-label">{milestonesCount !== 1 ? m.milestones() : m.milestone()}</span>
 				</div>
 				<div class="stat-item">
 					<CheckSquare size={20} />
 					<span class="stat-number">{tasksCount}</span>
-					<span class="stat-label">Task{tasksCount !== 1 ? 's' : ''}</span>
+					<span class="stat-label">{tasksCount !== 1 ? m.tasks() : m.task()}</span>
 				</div>
 			</div>
 		</div>
@@ -93,10 +94,10 @@
 				disabled={isProcessing}
 				type="button"
 			>
-				Cancel
+				{m.cancel()}
 			</button>
 			<button class="btn btn-primary" onclick={handleConfirm} disabled={isProcessing} type="button">
-				{isProcessing ? 'Importing...' : 'Import Data'}
+				{isProcessing ? m.importing() : m.import_data()}
 			</button>
 		</div>
 	</div>

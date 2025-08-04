@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Moon, Sun } from '@lucide/svelte';
 	import { onMount } from 'svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	let isDark = $state(false);
 
@@ -24,14 +25,11 @@
 		isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
 		updateTheme();
 	});
+
+	let buttonTitle = $derived(isDark ? m.switch_to_light_theme() : m.switch_to_dark_theme());
 </script>
 
-<button
-	class="btn btn-icon"
-	onclick={toggleTheme}
-	aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-	title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
->
+<button class="btn btn-icon" onclick={toggleTheme} aria-label={buttonTitle} title={buttonTitle}>
 	{#if isDark}
 		<Sun size={20} />
 	{:else}

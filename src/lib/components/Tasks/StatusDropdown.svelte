@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { TaskStatus } from '$lib/models/types';
 	import { ChevronDown } from '@lucide/svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		status: TaskStatus;
@@ -13,9 +14,9 @@
 	let isOpen = $state(false);
 
 	const statusOptions: { value: TaskStatus; label: string }[] = [
-		{ value: 'planned', label: 'Planned' },
-		{ value: 'in_progress', label: 'In Progress' },
-		{ value: 'done', label: 'Done' }
+		{ value: 'planned', label: m.planned() },
+		{ value: 'in_progress', label: m.in_progress() },
+		{ value: 'done', label: m.done() }
 	];
 
 	const selectedOption = $derived(
@@ -160,6 +161,7 @@
 		font-size: 0.75rem;
 		font-weight: 600;
 		text-transform: uppercase;
+		text-wrap: nowrap;
 	}
 
 	.dropdown-option:hover {

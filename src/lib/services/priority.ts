@@ -1,4 +1,5 @@
 import type { ValueEffortLevel } from '$lib/models/types';
+import { m } from '$lib/paraglide/messages';
 
 // Priority calculation utilities based on Value vs Effort matrix
 export function calculatePriority(value: ValueEffortLevel, effort: ValueEffortLevel): number {
@@ -12,15 +13,15 @@ export function calculatePriority(value: ValueEffortLevel, effort: ValueEffortLe
 export function getPriorityLabel(priority: number): string {
 	switch (priority) {
 		case 5:
-			return 'Quick Win';
+			return m.quick_win();
 		case 4:
-			return 'Strategic';
+			return m.strategic();
 		case 2:
-			return 'Consider';
+			return m.consider();
 		case 1:
-			return 'Avoid';
+			return m.avoid();
 		default:
-			return 'Unknown';
+			return m.unknown();
 	}
 }
 
@@ -30,11 +31,11 @@ export function getEffortLabel(value: ValueEffortLevel, effort: ValueEffortLevel
 
 // TODO: See if this function is needed or if we can use the getPriorityLabel function
 export function getPriorityDescription(value: ValueEffortLevel, effort: ValueEffortLevel): string {
-	if (value === 'high' && effort === 'low') return 'Prioritize (Quick Wins)';
-	if (value === 'high' && effort === 'high') return 'Plan strategically';
-	if (value === 'low' && effort === 'low') return 'Consider';
-	if (value === 'low' && effort === 'high') return 'Avoid';
-	return 'Unknown';
+	if (value === 'high' && effort === 'low') return m.prioritize_quick_wins();
+	if (value === 'high' && effort === 'high') return m.plan_strategically();
+	if (value === 'low' && effort === 'low') return m.consider();
+	if (value === 'low' && effort === 'high') return m.avoid();
+	return m.unknown();
 }
 
 function capitalizeFirstLetter(val: string): string {

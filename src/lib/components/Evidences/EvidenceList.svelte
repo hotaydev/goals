@@ -9,6 +9,7 @@
 		ChevronDown,
 		ChevronRight
 	} from '@lucide/svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		evidences: Evidence[];
@@ -45,25 +46,25 @@
 		<button
 			class="expand-toggle"
 			onclick={() => (isExpanded = !isExpanded)}
-			title="Toggle evidences section"
+			title={m.toggle_evidences_section()}
 		>
 			{#if isExpanded}
 				<ChevronDown size={16} />
 			{:else}
 				<ChevronRight size={16} />
 			{/if}
-			<h4>Evidences & Notes ({evidences.length})</h4>
+			<h4>{m.evidences_section_title({ count: evidences.length })}</h4>
 		</button>
 		<button class="add-evidence-btn" onclick={onAdd} title="Add evidence or note">
 			<Plus size={16} />
-			Add
+			{m.add()}
 		</button>
 	</div>
 
 	{#if isExpanded}
 		{#if evidences.length === 0}
 			<div class="empty-state">
-				<p>No evidences or notes yet. Add some to track your progress.</p>
+				<p>{m.no_evidences_yet()}</p>
 			</div>
 		{:else}
 			<div class="evidences-list">
@@ -78,17 +79,17 @@
 						</div>
 						<div class="evidence-content">
 							<div class="evidence-title">
-								{evidence.title}
+								{evidence.title} •
 								{#if evidence.type === 'link' && isValidUrl(evidence.content)}
 									<button
 										class="link-button"
 										onclick={() => handleLinkClick(evidence.content)}
-										title="Open link in new tab"
+										title={m.open_link_in_new_tab()}
 									>
-										• {evidence.content}
+										{evidence.content}
 									</button>
 								{:else}
-									<span class="evidence-text">• {evidence.content}</span>
+									<span class="evidence-text">{evidence.content}</span>
 								{/if}
 							</div>
 						</div>
@@ -96,14 +97,14 @@
 							<button
 								class="action-btn edit"
 								onclick={() => onEdit(evidence)}
-								title="Edit evidence"
+								title={m.edit_evidence()}
 							>
 								<Pencil size={14} />
 							</button>
 							<button
 								class="action-btn delete"
 								onclick={() => onDelete(evidence.id)}
-								title="Delete evidence"
+								title={m.delete_evidence()}
 							>
 								<Trash2 size={14} />
 							</button>

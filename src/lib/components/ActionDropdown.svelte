@@ -2,6 +2,7 @@
 	import { MoreVertical, Edit, Trash2 } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import { modalStore } from '$lib/stores/modalStore';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		onEdit?: () => void;
@@ -32,10 +33,12 @@
 	}
 
 	function handleDelete() {
+		const itemTypeLabel =
+			itemType === 'goal' ? m.goal() : itemType === 'milestone' ? m.milestone() : m.task();
 		const message =
 			deleteConfirmMessage ||
-			`Are you sure you want to delete this ${itemType}? This action cannot be undone.`;
-		const title = `Delete ${itemType}`;
+			m.are_you_sure_you_want_to_delete_this_item({ itemType: itemTypeLabel });
+		const title = m.delete() + ' ' + itemTypeLabel;
 
 		modalStore.openDeleteConfirmationModal(
 			title,
@@ -65,7 +68,7 @@
 </script>
 
 <div class="action-dropdown" bind:this={dropdownElement}>
-	<button class="action-trigger" onclick={toggleDropdown} title="More actions">
+	<button class="action-trigger" onclick={toggleDropdown} title={m.more_actions()}>
 		<MoreVertical size={16} />
 	</button>
 
@@ -74,13 +77,13 @@
 			{#if onEdit}
 				<button class="dropdown-item" onclick={handleEdit}>
 					<Edit size={14} />
-					Edit
+					{m.edit()}
 				</button>
 			{/if}
 			{#if onDelete}
 				<button class="dropdown-item delete" onclick={handleDelete}>
 					<Trash2 size={14} />
-					Delete
+					{m.delete()}
 				</button>
 			{/if}
 		</div>

@@ -1,4 +1,5 @@
 import type { TargetDate } from '$lib/models/types';
+import { m } from '$lib/paraglide/messages';
 
 export type TimeCategory = 'overdue' | 'critical' | 'close' | 'soon' | 'plenty';
 
@@ -49,7 +50,7 @@ export function calculateTimeRemaining(
 		return {
 			days: 0,
 			category: 'plenty',
-			label: 'No target date',
+			label: m.no_target_date(),
 			isOverdue: false
 		};
 	}
@@ -66,59 +67,57 @@ export function calculateTimeRemaining(
 	if (isOverdue) {
 		const overdueDays = Math.abs(daysDiff);
 		category = 'overdue';
-		if (overdueDays === 1) {
-			label = '1 day overdue';
-		} else if (overdueDays < 7) {
-			label = `${overdueDays} days overdue`;
+		if (overdueDays < 7) {
+			label = overdueDays === 1 ? m.due_1_day_overdue() : m.due_days_overdue({ days: overdueDays });
 		} else if (overdueDays < 30) {
 			const weeks = Math.floor(overdueDays / 7);
-			label = weeks === 1 ? '1 week overdue' : `${weeks} weeks overdue`;
+			label = weeks === 1 ? m.due_1_week_overdue() : m.due_weeks_overdue({ weeks });
 		} else if (overdueDays < 365) {
 			const months = Math.floor(overdueDays / 30);
-			label = months === 1 ? '1 month overdue' : `${months} months overdue`;
+			label = months === 1 ? m.due_1_month_overdue() : m.due_months_overdue({ months });
 		} else {
 			const years = Math.floor(overdueDays / 365);
-			label = years === 1 ? '1 year overdue' : `${years} years overdue`;
+			label = years === 1 ? m.due_1_year_overdue() : m.due_years_overdue({ years });
 		}
 	} else if (daysDiff === 0) {
 		category = 'critical';
-		label = 'Due today';
+		label = m.due_today();
 	} else if (daysDiff === 1) {
 		category = 'critical';
-		label = 'Due tomorrow';
+		label = m.due_tomorrow();
 	} else if (daysDiff <= 3) {
 		category = 'critical';
-		label = `${daysDiff} days left`;
+		label = m.due_days_left({ days: daysDiff });
 	} else if (daysDiff <= 14) {
 		category = 'close';
 		if (daysDiff === 7) {
-			label = '1 week left';
+			label = m.due_1_week_left();
 		} else {
-			label = `${daysDiff} days left`;
+			label = m.due_days_left({ days: daysDiff });
 		}
 	} else if (daysDiff <= 60) {
 		category = 'soon';
 		if (daysDiff < 30) {
 			const weeks = Math.floor(daysDiff / 7);
-			label = weeks === 1 ? '1 week left' : `${weeks} weeks left`;
+			label = weeks === 1 ? m.due_1_week_left() : m.due_weeks_left({ weeks });
 		} else {
 			const months = Math.floor(daysDiff / 30);
-			label = months === 1 ? '1 month left' : `${months} months left`;
+			label = months === 1 ? m.due_1_month_left() : m.due_months_left({ months });
 		}
 	} else {
 		category = 'plenty';
 		if (daysDiff < 365) {
 			const months = Math.floor(daysDiff / 30);
-			label = months === 1 ? '1 month left' : `${months} months left`;
+			label = months === 1 ? m.due_1_month_left() : m.due_months_left({ months });
 		} else {
 			const years = Math.floor(daysDiff / 365);
 			const remainingMonths = Math.floor((daysDiff % 365) / 30);
 			if (years === 1 && remainingMonths === 0) {
-				label = '1 year left';
+				label = m.due_1_year_left();
 			} else if (remainingMonths === 0) {
-				label = `${years} years left`;
+				label = m.due_years_left({ years });
 			} else {
-				label = `${years}y ${remainingMonths}m left`;
+				label = m.due_years_months_left({ years, months: remainingMonths });
 			}
 		}
 	}
@@ -141,7 +140,7 @@ export function formatTargetDate(
 	targetDate?: TargetDate,
 	options: { monthFormat?: 'short' | 'long' } = {}
 ): string {
-	if (!targetDate) return 'No target date';
+	if (!targetDate) return m.no_target_date();
 
 	const { year, month, day } = targetDate;
 	const { monthFormat = 'short' } = options;

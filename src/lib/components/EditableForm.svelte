@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { SMARTCriteria, TargetDate, ValueEffortLevel } from '$lib/models/types';
 	import EmojiSelector from './EmojiSelector.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		title: string;
@@ -49,28 +50,16 @@
 	});
 
 	const smartLabels = {
-		specific: 'Specific',
-		measurable: 'Measurable',
-		achievable: 'Achievable',
-		relevant: 'Relevant',
-		timeBound: 'Time-Bound'
+		specific: m.smart_label_specific(),
+		measurable: m.smart_label_measurable(),
+		achievable: m.smart_label_achievable(),
+		relevant: m.smart_label_relevant(),
+		timeBound: m.smart_label_time_bound()
 	};
 
 	const valueEffortOptions: ValueEffortLevel[] = ['high', 'low'];
-	const months = [
-		'January',
-		'February',
-		'March',
-		'April',
-		'May',
-		'June',
-		'July',
-		'August',
-		'September',
-		'October',
-		'November',
-		'December'
-	];
+	const formatter = new Intl.DateTimeFormat(undefined, { month: 'long' });
+	const months = Array.from({ length: 12 }, (_, i) => formatter.format(new Date(2000, i, 1)));
 
 	function handleSubmit(event: SubmitEvent) {
 		event.preventDefault();
@@ -92,33 +81,33 @@
 	<form onsubmit={handleSubmit}>
 		<!-- Basic Information -->
 		<div class="form-section">
-			<h3>Basic Information</h3>
+			<h3>{m.basic_information()}</h3>
 			<div class="form-grid">
 				<div class="form-group full-width">
-					<label for="title">Title *</label>
+					<label for="title">{m.title_string()} *</label>
 					<input
 						id="title"
 						type="text"
 						bind:value={formData.title}
 						required
 						disabled={isSubmitting}
-						placeholder="Enter title"
+						placeholder={m.enter_title()}
 					/>
 				</div>
 
 				<div class="form-group full-width">
-					<label for="description">Description</label>
+					<label for="description">{m.description()}</label>
 					<textarea
 						id="description"
 						bind:value={formData.description}
 						disabled={isSubmitting}
-						placeholder="Enter description"
+						placeholder={m.enter_description()}
 						rows="3"
 					></textarea>
 				</div>
 
 				<div class="form-group">
-					<label for="icon">Icon (emoji)</label>
+					<label for="icon">{m.goal_creation_icon()}</label>
 					<EmojiSelector
 						value={formData.icon}
 						onChange={(emoji) => (formData.icon = emoji)}
@@ -130,22 +119,22 @@
 
 		<!-- Value & Effort Matrix -->
 		<div class="form-section">
-			<h3>Value & Effort Matrix</h3>
+			<h3>{m.value_effort_matrix()}</h3>
 			<div class="form-grid">
 				<div class="form-group">
-					<label for="value">Value *</label>
+					<label for="value">{m.value()} *</label>
 					<select id="value" bind:value={formData.value} required disabled={isSubmitting}>
 						{#each valueEffortOptions as option (option)}
-							<option value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</option>
+							<option value={option}>{option === 'high' ? m.high() : m.low()}</option>
 						{/each}
 					</select>
 				</div>
 
 				<div class="form-group">
-					<label for="effort">Effort *</label>
+					<label for="effort">{m.effort()} *</label>
 					<select id="effort" bind:value={formData.effort} required disabled={isSubmitting}>
 						{#each valueEffortOptions as option (option)}
-							<option value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</option>
+							<option value={option}>{option === 'high' ? m.high() : m.low()}</option>
 						{/each}
 					</select>
 				</div>
@@ -154,33 +143,33 @@
 
 		<!-- Target Date -->
 		<div class="form-section">
-			<h3>Target Date</h3>
+			<h3>{m.target_date()}</h3>
 			<div class="form-grid">
 				<div class="form-group">
-					<label for="year">Year *</label>
+					<label for="year">{m.year()} *</label>
 					<input
 						id="year"
 						type="number"
 						bind:value={formData.targetDate.year}
 						required
 						disabled={isSubmitting}
-						min="2024"
+						min={new Date().getFullYear()}
 						max="2100"
 					/>
 				</div>
 
 				<div class="form-group">
-					<label for="month">Month</label>
+					<label for="month">{m.month()}</label>
 					<select id="month" bind:value={formData.targetDate.month} disabled={isSubmitting}>
-						<option value={undefined}>Not specified</option>
+						<option value={undefined}>{m.not_specified()}</option>
 						{#each months as month, index (month)}
-							<option value={index + 1}>{month}</option>
+							<option value={index + 1}>{month.charAt(0).toUpperCase() + month.slice(1)}</option>
 						{/each}
 					</select>
 				</div>
 
 				<div class="form-group">
-					<label for="day">Day</label>
+					<label for="day">{m.day()}</label>
 					<input
 						id="day"
 						type="number"
@@ -188,7 +177,7 @@
 						disabled={isSubmitting}
 						min="1"
 						max="31"
-						placeholder="Optional"
+						placeholder={m.optional()}
 					/>
 				</div>
 			</div>
@@ -196,7 +185,7 @@
 
 		<!-- SMART Criteria -->
 		<div class="form-section">
-			<h3>SMART Goals Criteria</h3>
+			<h3>{m.smart_goals_criteria()}</h3>
 			<div class="smart-form-grid">
 				{#each Object.entries(smartLabels) as [key, label] (key)}
 					<div class="form-group">
@@ -209,7 +198,7 @@
 							value={formData.smart[key as keyof SMARTCriteria]}
 							oninput={(e) => updateSmart(key as keyof SMARTCriteria, e.currentTarget.value)}
 							disabled={isSubmitting}
-							placeholder="Enter {label.toLowerCase()} criteria"
+							placeholder={m.smart_goals_enter_criteria({ label: label.toLowerCase() })}
 							rows="3"
 						></textarea>
 					</div>
@@ -220,10 +209,10 @@
 		<!-- Form Actions -->
 		<div class="form-actions">
 			<button type="button" class="button-secondary" onclick={handleCancel} disabled={isSubmitting}>
-				Cancel
+				{m.cancel()}
 			</button>
 			<button type="submit" class="button-primary" disabled={isSubmitting}>
-				{isSubmitting ? 'Saving...' : 'Save Changes'}
+				{isSubmitting ? m.saving() : m.save_changes()}
 			</button>
 		</div>
 	</form>

@@ -11,6 +11,7 @@
 	import ModalManager from '$lib/components/ModalManager.svelte';
 	import { calculatePriority } from '$lib/services/priority';
 	import { getMilestoneCompletionPercentage } from '$lib/services/percentage';
+	import { m } from '$lib/paraglide/messages';
 
 	let loading = $state(true);
 	let error = $state<string | null>(null);
@@ -51,14 +52,14 @@
 
 			const paramGoalId = page.params?.goalId;
 			if (!paramGoalId) {
-				error = 'Goal ID is required';
+				error = m.error_goal_id_required();
 				return;
 			}
 
 			goalId = paramGoalId;
 		} catch (err) {
 			console.error('Failed to initialize goals store:', err);
-			error = 'Failed to load goal';
+			error = m.error_failed_to_load_goal();
 		} finally {
 			loading = false;
 		}
@@ -67,7 +68,7 @@
 	// Check if goal exists
 	$effect(() => {
 		if (!loading && goalId && !goal) {
-			error = 'Goal not found';
+			error = m.error_goal_not_found();
 		}
 	});
 
@@ -104,10 +105,9 @@
 
 	function handleDeleteGoal() {
 		if (goal) {
-			const confirmMessage = `Are you sure you want to delete the goal "${goal.title}"? This action cannot be undone and will also delete all associated milestones and tasks.`;
 			modalStore.openDeleteConfirmationModal(
-				'Delete Goal',
-				confirmMessage,
+				m.delete_goal_confirmation_title(),
+				m.delete_goal_confirmation_message(),
 				goal.title,
 				'goal',
 				() => {
@@ -133,31 +133,31 @@
 	</div>
 {:else if error}
 	<div class="error-state">
-		<h2>Error</h2>
+		<h2>{m.error()}</h2>
 		<p>{error}</p>
 		<button class="btn btn-primary" onclick={handleGoBack}>
 			<ArrowLeft size={20} />
-			Go Back
+			{m.go_back()}
 		</button>
 	</div>
 {:else if goal}
 	<div class="goal-detail-page">
 		<!-- Navigation Header -->
 		<div class="nav-header">
-			<button class="btn btn-icon" onclick={handleGoBack} title="Go back to goals">
+			<button class="btn btn-icon" onclick={handleGoBack} title={m.go_back_to_goals()}>
 				<ArrowLeft size={20} />
 			</button>
 			<div class="nav-title">
 				<h1>{goal.title}</h1>
 			</div>
 			<div class="nav-actions">
-				<button class="btn" onclick={handleEditGoal} title="Edit goal">
+				<button class="btn" onclick={handleEditGoal} title={m.edit_goal()}>
 					<Edit size={16} />
-					Edit
+					{m.edit()}
 				</button>
-				<button class="btn" onclick={handleDeleteGoal} title="Delete goal">
+				<button class="btn" onclick={handleDeleteGoal} title={m.delete_goal()}>
 					<Trash2 size={16} />
-					Delete
+					{m.delete()}
 				</button>
 			</div>
 		</div>
@@ -171,14 +171,14 @@
 		<!-- Milestones Section -->
 		<div class="milestones-section">
 			<div class="milestones-header">
-				<h2>Milestones</h2>
+				<h2>{m.milestones()}</h2>
 				<button
 					class="btn btn-primary"
 					onclick={handleCreateMilestone}
-					title="Create new milestone"
+					title={m.create_new_milestone()}
 				>
 					<Plus size={16} />
-					New Milestone
+					{m.create_milestone()}
 				</button>
 			</div>
 			<div class="milestones-list">
@@ -188,11 +188,11 @@
 				{#if goal.milestones.length === 0}
 					<div class="empty-state">
 						<div class="empty-icon">🎯</div>
-						<h3>No milestones yet</h3>
-						<p>Create your first milestone to break down this goal into manageable steps.</p>
+						<h3>{m.no_milestones_yet()}</h3>
+						<p>{m.no_milestones_yet_description()}</p>
 						<button class="btn btn-primary" onclick={handleCreateMilestone}>
 							<Plus size={16} />
-							Create First Milestone
+							{m.create_first_milestone()}
 						</button>
 					</div>
 				{/if}

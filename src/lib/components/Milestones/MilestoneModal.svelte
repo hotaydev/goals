@@ -20,6 +20,7 @@
 	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
 	import ActionDropdown from '$lib/components/ActionDropdown.svelte';
 	import EvidenceList from '$lib/components/Evidences/EvidenceList.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		milestone: Milestone | null;
@@ -74,7 +75,7 @@
 			isSubmitting = true;
 
 			if (mode === 'create') {
-				if (!goalId) throw new Error('Goal ID is required for creating milestones');
+				if (!goalId) throw new Error(m.goal_id_required_for_creating_milestones());
 
 				goalsStore.addMilestone(goalId, {
 					...formData,
@@ -83,7 +84,7 @@
 				modalStore.closeMilestoneModal();
 			} else if (mode === 'edit' && milestone) {
 				const milestoneGoalId = goalsStore.findMilestoneLocation(milestone.id);
-				if (!milestoneGoalId) throw new Error('Goal not found');
+				if (!milestoneGoalId) throw new Error(m.goal_not_found());
 
 				const updatedMilestone: Milestone = {
 					...milestone,
@@ -102,7 +103,7 @@
 			}
 		} catch (error) {
 			console.error('Failed to save milestone:', error);
-			alert('Failed to save milestone. Please try again.');
+			alert(m.failed_to_save_milestone());
 		} finally {
 			isSubmitting = false;
 		}
@@ -174,10 +175,10 @@
 	{isOpen}
 	{onClose}
 	title={mode === 'create'
-		? 'Create New Milestone'
+		? m.create_new_milestone()
 		: mode === 'edit'
-			? 'Edit Milestone'
-			: 'Milestone Details'}
+			? m.edit_milestone()
+			: m.milestone_details()}
 >
 	<div class="milestone-modal-content">
 		{#if mode === 'edit' || mode === 'create'}
@@ -216,7 +217,7 @@
 						<ActionDropdown
 							onEdit={handleEdit}
 							onDelete={handleDelete}
-							deleteConfirmMessage={`Are you sure you want to delete the milestone "${milestone.title}"? This will also delete all associated tasks and cannot be undone.`}
+							deleteConfirmMessage={m.are_you_sure_you_want_to_delete_milestone()}
 							itemName={milestone.title}
 							itemType="milestone"
 						/>
@@ -229,7 +230,7 @@
 						<TimeRemaining
 							targetDate={milestone.targetDate}
 							size="medium"
-							extraText={`Expected by ${formatTargetDate(milestone.targetDate)}`}
+							extraText={m.expected_by({ date: formatTargetDate(milestone.targetDate) })}
 						/>
 					</div>
 				</div>
@@ -241,10 +242,14 @@
 			<!-- Tasks Section -->
 			<div class="tasks-section">
 				<div class="tasks-header">
-					<h3>Tasks</h3>
-					<button class="action-button primary" onclick={handleCreateTask} title="Create new task">
+					<h3>{m.tasks()}</h3>
+					<button
+						class="action-button primary"
+						onclick={handleCreateTask}
+						title={m.create_new_task()}
+					>
 						<Plus size={16} />
-						New Task
+						{m.new_task()}
 					</button>
 				</div>
 				<TaskList tasks={milestone.tasks} />
@@ -259,7 +264,7 @@
 			/>
 		{:else}
 			<div class="error-state">
-				<p>Milestone not found</p>
+				<p>{m.milestone_not_found()}</p>
 			</div>
 		{/if}
 	</div>
