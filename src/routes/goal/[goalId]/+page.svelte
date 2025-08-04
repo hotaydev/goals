@@ -166,7 +166,7 @@
 		<GoalHeader {goal} />
 
 		<!-- SMART Criteria Section -->
-		<SMARTSection smart={goal.smart} />
+		<SMARTSection smart={goal.smart} defaultExpanded={false} />
 
 		<!-- Milestones Section -->
 		<div class="milestones-section">

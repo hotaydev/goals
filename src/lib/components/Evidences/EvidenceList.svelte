@@ -79,17 +79,16 @@
 						</div>
 						<div class="evidence-content">
 							<div class="evidence-title">
-								{evidence.title} •
 								{#if evidence.type === 'link' && isValidUrl(evidence.content)}
 									<button
 										class="link-button"
 										onclick={() => handleLinkClick(evidence.content)}
 										title={m.open_link_in_new_tab()}
 									>
-										{evidence.content}
+										{evidence.title}
 									</button>
 								{:else}
-									<span class="evidence-text">{evidence.content}</span>
+									{evidence.title} • <span class="evidence-text">{evidence.content}</span>
 								{/if}
 							</div>
 						</div>
