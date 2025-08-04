@@ -2,6 +2,8 @@
 
 A modern web application for managing long-term goals using the SMART methodology. Built with Svelte 5 and designed for desktop-first experience with mobile support.
 
+🌐 **Live Demo**: [https://goals.hotay.dev](https://goals.hotay.dev)
+
 ## 🎯 Features
 
 - **SMART Goal Setting**: Create Specific, Measurable, Achievable, Relevant, and Time-bound goals
