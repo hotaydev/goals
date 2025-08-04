@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MoreVertical, Edit, Trash2 } from '@lucide/svelte';
+	import { MoreVertical, Edit, Trash2, Copy } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import { modalStore } from '$lib/stores/modalStore';
 	import { m } from '$lib/paraglide/messages';
@@ -7,6 +7,7 @@
 	interface Props {
 		onEdit?: () => void;
 		onDelete?: () => void;
+		onDuplicate?: () => void;
 		deleteConfirmMessage?: string;
 		itemName?: string;
 		itemType?: 'goal' | 'milestone' | 'task';
@@ -15,6 +16,7 @@
 	let {
 		onEdit,
 		onDelete,
+		onDuplicate,
 		deleteConfirmMessage,
 		itemName = 'item',
 		itemType = 'task'
@@ -29,6 +31,11 @@
 
 	function handleEdit() {
 		onEdit?.();
+		isOpen = false;
+	}
+
+	function handleDuplicate() {
+		onDuplicate?.();
 		isOpen = false;
 	}
 
@@ -78,6 +85,12 @@
 				<button class="dropdown-item" onclick={handleEdit}>
 					<Edit size={14} />
 					{m.edit()}
+				</button>
+			{/if}
+			{#if onDuplicate}
+				<button class="dropdown-item" onclick={handleDuplicate}>
+					<Copy size={14} />
+					{m.duplicate()}
 				</button>
 			{/if}
 			{#if onDelete}

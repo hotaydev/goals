@@ -24,12 +24,14 @@ A modern web application for managing long-term goals using the SMART methodolog
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/hotaydev/goals.git
 cd goals
 ```
 
 2. Install dependencies:
+
 ```bash
 pnpm install
 ```
@@ -37,6 +39,7 @@ pnpm install
 ### Development
 
 Start the development server:
+
 ```bash
 pnpm dev
 ```
@@ -46,11 +49,13 @@ The application will be available at `http://localhost:5173`
 ### Building for Production
 
 Build the application:
+
 ```bash
 pnpm build
 ```
 
 Preview the production build:
+
 ```bash
 pnpm preview
 ```
@@ -58,11 +63,13 @@ pnpm preview
 ### Code Quality
 
 Check TypeScript types:
+
 ```bash
 pnpm check
 ```
 
 Format code:
+
 ```bash
 pnpm format
 ```

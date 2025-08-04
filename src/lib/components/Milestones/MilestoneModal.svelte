@@ -4,12 +4,13 @@
 		SMARTCriteria,
 		TargetDate,
 		ValueEffortLevel,
-		Evidence
+		Evidence,
+		Goal
 	} from '$lib/models/types';
 	import { calculatePriority, getEffortLabel, getPriorityLabel } from '$lib/services/priority';
 	import { getMilestoneCompletionPercentage } from '$lib/services/percentage';
 	import { formatTargetDate } from '$lib/services/date';
-	import { goalsStore } from '$lib/stores/goalsStore';
+	import { goalsStore, goals } from '$lib/stores/goalsStore';
 	import { modalStore, type ModalMode } from '$lib/stores/modalStore';
 	import { Plus } from '@lucide/svelte';
 	import Modal from '$lib/components/Modal.svelte';
@@ -69,6 +70,31 @@
 			year: new Date().getFullYear() + 1
 		}
 	};
+
+	// Get milestone data for duplication
+	const milestoneDataForForm = $derived(() => {
+		if (mode === 'create' && $modalStore.duplicateSourceMilestoneId) {
+			// This is a duplicate case - find the original milestone and use its data
+			const goalId = goalsStore.findMilestoneLocation($modalStore.duplicateSourceMilestoneId);
+			if (goalId) {
+				// Find the milestone in the goals data
+				const goal = $goals.find((g: Goal) => g.id === goalId);
+				const originalMilestone = goal?.milestones.find(
+					(milestone: Milestone) => milestone.id === $modalStore.duplicateSourceMilestoneId
+				);
+
+				if (originalMilestone) {
+					return {
+						...originalMilestone,
+						title: originalMilestone.title + ' (Copy)',
+						tasks: [], // Don't duplicate tasks
+						evidences: [] // Don't duplicate evidences
+					};
+				}
+			}
+		}
+		return milestone || defaultMilestone;
+	});
 
 	async function handleSave(formData: MilestoneFormData) {
 		try {
@@ -131,6 +157,15 @@
 		}
 	}
 
+	function handleDuplicate() {
+		if (milestone) {
+			const goalId = goalsStore.findMilestoneLocation(milestone.id);
+			if (goalId) {
+				modalStore.openDuplicateMilestoneModal(milestone.id, goalId);
+			}
+		}
+	}
+
 	function handleCreateTask() {
 		if (milestone) {
 			modalStore.openCreateTaskModal(milestone.id);
@@ -183,7 +218,7 @@
 	<div class="milestone-modal-content">
 		{#if mode === 'edit' || mode === 'create'}
 			<!-- Edit/Create Mode -->
-			{@const milestoneData = milestone || defaultMilestone}
+			{@const milestoneData = milestoneDataForForm()}
 			<EditableForm
 				title={milestoneData.title}
 				description={milestoneData.description}
@@ -217,6 +252,7 @@
 						<ActionDropdown
 							onEdit={handleEdit}
 							onDelete={handleDelete}
+							onDuplicate={handleDuplicate}
 							deleteConfirmMessage={m.are_you_sure_you_want_to_delete_milestone()}
 							itemName={milestone.title}
 							itemType="milestone"

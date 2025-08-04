@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { Task, TaskStatus, Evidence } from '$lib/models/types';
+	import type { Task, TaskStatus, Evidence, Milestone, Goal } from '$lib/models/types';
 	import { calculatePriority, getEffortLabel, getPriorityLabel } from '$lib/services/priority';
 	import { formatTargetDate } from '$lib/services/date';
-	import { goalsStore } from '$lib/stores/goalsStore';
+	import { goalsStore, goals } from '$lib/stores/goalsStore';
 	import { modalStore, type ModalMode } from '$lib/stores/modalStore';
 	import Modal from '$lib/components/Modal.svelte';
 	import SMARTSection from '$lib/components/SMARTSection.svelte';
@@ -49,6 +49,34 @@
 			year: new Date().getFullYear() + 1
 		}
 	};
+
+	// Get task data for duplication
+	const taskDataForForm = $derived(() => {
+		if (mode === 'create' && $modalStore.duplicateSourceTaskId) {
+			// This is a duplicate case - find the original task and use its data
+			const taskLocation = goalsStore.findTaskLocation($modalStore.duplicateSourceTaskId);
+			if (taskLocation) {
+				// Find the task in the goals data
+				const goal = $goals.find((g: Goal) => g.id === taskLocation.goalId);
+				const milestone = goal?.milestones.find(
+					(milestone: Milestone) => milestone.id === taskLocation.milestoneId
+				);
+				const originalTask = milestone?.tasks.find(
+					(task: Task) => task.id === $modalStore.duplicateSourceTaskId
+				);
+
+				if (originalTask) {
+					return {
+						...originalTask,
+						title: originalTask.title + ' (Copy)',
+						evidences: [], // Don't duplicate evidences
+						status: 'planned'
+					};
+				}
+			}
+		}
+		return task || defaultTask;
+	});
 
 	async function handleSave(formData: Omit<TaskFormData, 'status'>) {
 		try {
@@ -112,6 +140,15 @@
 			if (location) {
 				goalsStore.deleteTask(location.goalId, location.milestoneId, task.id);
 				modalStore.closeTaskModal();
+			}
+		}
+	}
+
+	function handleDuplicate() {
+		if (task) {
+			const location = goalsStore.findTaskLocation(task.id);
+			if (location) {
+				modalStore.openDuplicateTaskModal(task.id, location.milestoneId);
 			}
 		}
 	}
@@ -185,7 +222,7 @@
 	<div class="task-modal-content">
 		{#if mode === 'edit' || mode === 'create'}
 			<!-- Edit/Create Mode -->
-			{@const taskData = task || defaultTask}
+			{@const taskData = taskDataForForm()}
 			<TaskForm
 				title={taskData.title}
 				description={taskData.description}
@@ -224,6 +261,7 @@
 						<ActionDropdown
 							onEdit={handleEdit}
 							onDelete={handleDelete}
+							onDuplicate={handleDuplicate}
 							deleteConfirmMessage={m.are_you_sure_you_want_to_delete_this_task()}
 							itemName={task.title}
 							itemType="task"

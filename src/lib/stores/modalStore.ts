@@ -17,6 +17,8 @@ export interface ModalState {
 	taskMode: ModalMode;
 	createTaskMilestoneId?: string; // For creating new tasks within a milestone
 	createMilestoneGoalId?: string; // For creating new milestones within a goal
+	duplicateSourceTaskId?: string; // For duplicating tasks
+	duplicateSourceMilestoneId?: string; // For duplicating milestones
 	evidenceContext?: {
 		type: 'task' | 'milestone';
 		goalId: string;
@@ -58,6 +60,8 @@ function createModalStore() {
 		taskMode: 'view',
 		createTaskMilestoneId: undefined,
 		createMilestoneGoalId: undefined,
+		duplicateSourceTaskId: undefined,
+		duplicateSourceMilestoneId: undefined,
 		deleteConfirmation: undefined,
 		importConfirmation: undefined,
 		evidenceContext: undefined
@@ -134,6 +138,38 @@ function createModalStore() {
 				createMilestoneGoalId: goalId
 			}));
 		},
+		openDuplicateTaskModal: (taskId: string, milestoneId: string) => {
+			update((state) => ({
+				...state,
+				milestoneModalOpen: false,
+				goalModalOpen: false,
+				taskModalOpen: true,
+				openMilestoneId: undefined,
+				openTaskId: undefined, // Clear this since we're creating a new task
+				openGoalId: undefined,
+				taskMode: 'create',
+				createTaskMilestoneId: milestoneId,
+				createMilestoneGoalId: undefined,
+				duplicateSourceTaskId: taskId, // Store the source task ID for duplication
+				duplicateSourceMilestoneId: undefined
+			}));
+		},
+		openDuplicateMilestoneModal: (milestoneId: string, goalId: string) => {
+			update((state) => ({
+				...state,
+				milestoneModalOpen: true,
+				taskModalOpen: false,
+				goalModalOpen: false,
+				openMilestoneId: undefined, // Clear this since we're creating a new milestone
+				openTaskId: undefined,
+				openGoalId: undefined,
+				milestoneMode: 'create',
+				createTaskMilestoneId: undefined,
+				createMilestoneGoalId: goalId,
+				duplicateSourceTaskId: undefined,
+				duplicateSourceMilestoneId: milestoneId // Store the source milestone ID for duplication
+			}));
+		},
 		setMilestoneMode: (mode: ModalMode) => {
 			update((state) => ({
 				...state,
@@ -151,7 +187,8 @@ function createModalStore() {
 				...state,
 				milestoneModalOpen: false,
 				openMilestoneId: undefined,
-				milestoneMode: 'view'
+				milestoneMode: 'view',
+				duplicateSourceMilestoneId: undefined
 			}));
 		},
 		closeTaskModal: () => {
@@ -160,7 +197,8 @@ function createModalStore() {
 				taskModalOpen: false,
 				openTaskId: undefined,
 				taskMode: 'view',
-				createTaskMilestoneId: undefined
+				createTaskMilestoneId: undefined,
+				duplicateSourceTaskId: undefined
 			}));
 		},
 		closeGoalModal: () => {
@@ -283,6 +321,8 @@ function createModalStore() {
 				taskMode: 'view',
 				createTaskMilestoneId: undefined,
 				createMilestoneGoalId: undefined,
+				duplicateSourceTaskId: undefined,
+				duplicateSourceMilestoneId: undefined,
 				deleteConfirmation: undefined,
 				importConfirmation: undefined,
 				evidenceContext: undefined

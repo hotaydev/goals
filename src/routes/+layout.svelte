@@ -19,6 +19,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{m.title()}</title>
+</svelte:head>
+
 <!-- Top Bar -->
 <header class="top-bar">
 	<div class="container">
