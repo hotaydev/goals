@@ -270,13 +270,19 @@
 				</div>
 
 				<div class="task-meta-info">
-					<div class="target-date-info">
-						<TimeRemaining
-							targetDate={task.targetDate}
-							size="medium"
-							extraText={m.expected_by({ date: formatTargetDate(task.targetDate) })}
-						/>
-					</div>
+					{#if task.status !== 'done'}
+						<div class="target-date-info">
+							<TimeRemaining
+								targetDate={task.targetDate}
+								size="medium"
+								extraText={m.expected_by({ date: formatTargetDate(task.targetDate) })}
+							/>
+						</div>
+					{:else}
+						<div class="target-date-info">
+							<p>{m.expected_by({ date: formatTargetDate(task.targetDate) })}</p>
+						</div>
+					{/if}
 				</div>
 			</div>
 

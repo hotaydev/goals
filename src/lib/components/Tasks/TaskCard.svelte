@@ -45,9 +45,11 @@
 			<div class="priority-badge priority-{priority}" title={effortLabel}>
 				{priorityLabel}
 			</div>
-			<div class="date-info">
-				<TimeRemaining targetDate={task.targetDate} size="small" />
-			</div>
+			{#if task.status !== 'done'}
+				<div class="date-info">
+					<TimeRemaining targetDate={task.targetDate} size="small" />
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>

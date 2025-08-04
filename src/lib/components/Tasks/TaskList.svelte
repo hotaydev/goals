@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Task } from '$lib/models/types';
 	import { calculatePriority, getEffortLabel, getPriorityLabel } from '$lib/services/priority';
-	import { targetDateToDate } from '$lib/services/date';
+	import { formatTargetDate, targetDateToDate } from '$lib/services/date';
 	import { modalStore } from '$lib/stores/modalStore';
 	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
 	import { m } from '$lib/paraglide/messages';
@@ -74,7 +74,11 @@
 				</div>
 
 				<div class="task-date">
-					<TimeRemaining targetDate={task.targetDate} size="small" />
+					{#if task.status !== 'done'}
+						<TimeRemaining targetDate={task.targetDate} size="small" />
+					{:else}
+						<p class="date-value">{formatTargetDate(task.targetDate)}</p>
+					{/if}
 				</div>
 			</div>
 		{/each}

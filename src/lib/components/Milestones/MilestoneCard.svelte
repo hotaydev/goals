@@ -41,7 +41,13 @@
 							<div class="priority-badge priority-{priority}" title={effortLabel}>
 								{priorityLabel}
 							</div>
-							<TimeRemaining targetDate={milestone.targetDate} size="medium" />
+							{#if completionPercentage < 100}
+								<TimeRemaining targetDate={milestone.targetDate} size="medium" />
+							{:else}
+								<p class="priority-badge priority-5">
+									{m.completed()}
+								</p>
+							{/if}
 						</div>
 						<p class="milestone-description">{milestone.description}</p>
 					</div>

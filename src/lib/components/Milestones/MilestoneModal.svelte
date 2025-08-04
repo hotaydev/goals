@@ -263,11 +263,23 @@
 				<div class="milestone-meta-info">
 					<ProgressBar percentage={completionPercentage} />
 					<div class="target-date-info">
-						<TimeRemaining
-							targetDate={milestone.targetDate}
-							size="medium"
-							extraText={m.expected_by({ date: formatTargetDate(milestone.targetDate) })}
-						/>
+						{#if completionPercentage < 100}
+							<TimeRemaining
+								targetDate={milestone.targetDate}
+								size="medium"
+								extraText={m.expected_by({ date: formatTargetDate(milestone.targetDate) })}
+							/>
+						{:else}
+							<p>
+								<span class="priority-badge priority-5">
+									{m.completed()}
+								</span>
+								|
+								<span class="date-value">
+									{m.expected_by({ date: formatTargetDate(milestone.targetDate) })}
+								</span>
+							</p>
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -459,6 +471,12 @@
 		background-color: var(--color-primary-hover);
 		border-color: var(--color-primary-hover);
 		color: white;
+	}
+
+	.date-value {
+		color: var(--color-text-secondary);
+		font-size: 0.875rem;
+		font-weight: 500;
 	}
 
 	@media (max-width: 768px) {
