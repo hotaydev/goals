@@ -3,6 +3,7 @@
 	import { getGoalCompletionPercentage } from '$lib/services/percentage';
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
 	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
+	import CompletionBadge from '$lib/components/CompletionBadge.svelte';
 
 	let { goal }: { goal: Goal } = $props();
 
@@ -18,7 +19,11 @@
 			<div class="goal-text">
 				<div class="goal-title-section">
 					<h1>{goal.title}</h1>
-					<TimeRemaining targetDate={goal.targetDate} size="large" />
+					{#if completionPercentage < 100}
+						<TimeRemaining targetDate={goal.targetDate} size="large" />
+					{:else}
+						<CompletionBadge targetDate={goal.targetDate} size="large" />
+					{/if}
 				</div>
 				<p class="goal-description">{goal.description}</p>
 			</div>

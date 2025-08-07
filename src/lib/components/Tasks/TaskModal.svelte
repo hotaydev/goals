@@ -5,9 +5,9 @@
 	import { goalsStore, goals } from '$lib/stores/goalsStore';
 	import { modalStore, type ModalMode } from '$lib/stores/modalStore';
 	import Modal from '$lib/components/Modal.svelte';
-	import SMARTSection from '$lib/components/SMARTSection.svelte';
 	import TaskForm, { type TaskFormData } from '$lib/components/Tasks/TaskForm.svelte';
 	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
+	import CompletionBadge from '$lib/components/CompletionBadge.svelte';
 	import StatusDropdown from '$lib/components/Tasks/StatusDropdown.svelte';
 	import ActionDropdown from '$lib/components/ActionDropdown.svelte';
 	import EvidenceList from '$lib/components/Evidences/EvidenceList.svelte';
@@ -38,13 +38,6 @@
 		status: 'planned' as const,
 		value: 'high' as const,
 		effort: 'low' as const,
-		smart: {
-			specific: '',
-			measurable: '',
-			achievable: '',
-			relevant: '',
-			timeBound: ''
-		},
 		targetDate: {
 			year: new Date().getFullYear() + 1
 		}
@@ -103,7 +96,6 @@
 					title: formData.title,
 					description: formData.description,
 					icon: formData.icon,
-					smart: formData.smart,
 					targetDate: formData.targetDate,
 					value: formData.value,
 					effort: formData.effort,
@@ -227,7 +219,6 @@
 				title={taskData.title}
 				description={taskData.description}
 				icon={taskData.icon}
-				smart={taskData.smart}
 				targetDate={taskData.targetDate}
 				value={taskData.value}
 				effort={taskData.effort}
@@ -280,14 +271,15 @@
 						</div>
 					{:else}
 						<div class="target-date-info">
-							<p>{m.expected_by({ date: formatTargetDate(task.targetDate) })}</p>
+							<CompletionBadge
+								targetDate={task.targetDate}
+								size="medium"
+								extraText={m.expected_by({ date: formatTargetDate(task.targetDate) })}
+							/>
 						</div>
 					{/if}
 				</div>
 			</div>
-
-			<!-- SMART Criteria Section -->
-			<SMARTSection smart={task.smart} compact defaultExpanded={false} />
 
 			<!-- Evidences Section -->
 			<EvidenceList
@@ -319,8 +311,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--spacing-md);
-		padding-bottom: var(--spacing-md);
-		border-bottom: 1px solid var(--color-border);
 	}
 
 	.task-title-area {

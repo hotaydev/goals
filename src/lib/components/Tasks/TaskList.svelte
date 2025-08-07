@@ -4,6 +4,7 @@
 	import { formatTargetDate, targetDateToDate } from '$lib/services/date';
 	import { modalStore } from '$lib/stores/modalStore';
 	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
+	import CompletionBadge from '$lib/components/CompletionBadge.svelte';
 	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
@@ -77,7 +78,11 @@
 					{#if task.status !== 'done'}
 						<TimeRemaining targetDate={task.targetDate} size="small" />
 					{:else}
-						<p class="date-value">{formatTargetDate(task.targetDate)}</p>
+						<CompletionBadge
+							targetDate={task.targetDate}
+							size="small"
+							extraText={m.expected_by({ date: formatTargetDate(task.targetDate) })}
+						/>
 					{/if}
 				</div>
 			</div>

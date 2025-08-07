@@ -19,6 +19,7 @@
 	import TaskList from '$lib/components/Tasks/TaskList.svelte';
 	import EditableForm from '$lib/components/EditableForm.svelte';
 	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
+	import CompletionBadge from '$lib/components/CompletionBadge.svelte';
 	import ActionDropdown from '$lib/components/ActionDropdown.svelte';
 	import EvidenceList from '$lib/components/Evidences/EvidenceList.svelte';
 	import { m } from '$lib/paraglide/messages';
@@ -270,15 +271,11 @@
 								extraText={m.expected_by({ date: formatTargetDate(milestone.targetDate) })}
 							/>
 						{:else}
-							<p>
-								<span class="priority-badge priority-5">
-									{m.completed()}
-								</span>
-								|
-								<span class="date-value">
-									{m.expected_by({ date: formatTargetDate(milestone.targetDate) })}
-								</span>
-							</p>
+							<CompletionBadge
+								targetDate={milestone.targetDate}
+								size="medium"
+								extraText={m.expected_by({ date: formatTargetDate(milestone.targetDate) })}
+							/>
 						{/if}
 					</div>
 				</div>

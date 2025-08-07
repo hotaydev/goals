@@ -1,12 +1,11 @@
 <script lang="ts">
-	import type { SMARTCriteria, TargetDate, ValueEffortLevel, TaskStatus } from '$lib/models/types';
-	import EditableForm from '$lib/components/EditableForm.svelte';
+	import type { TargetDate, ValueEffortLevel, TaskStatus } from '$lib/models/types';
+	import TaskEditableForm from '$lib/components/TaskEditableForm.svelte';
 
 	interface Props {
 		title: string;
 		description: string;
 		icon?: string;
-		smart: SMARTCriteria;
 		targetDate: TargetDate;
 		value: ValueEffortLevel;
 		effort: ValueEffortLevel;
@@ -19,7 +18,6 @@
 		title: string;
 		description: string;
 		icon?: string;
-		smart: SMARTCriteria;
 		targetDate: TargetDate;
 		value: ValueEffortLevel;
 		effort: ValueEffortLevel;
@@ -30,7 +28,6 @@
 		title,
 		description,
 		icon,
-		smart,
 		targetDate,
 		value,
 		effort,
@@ -45,11 +42,10 @@
 </script>
 
 <div class="task-form">
-	<EditableForm
+	<TaskEditableForm
 		{title}
 		{description}
 		{icon}
-		{smart}
 		{targetDate}
 		{value}
 		{effort}

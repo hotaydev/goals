@@ -7,8 +7,8 @@ A modern web application for managing long-term goals using the SMART methodolog
 ## 🎯 Features
 
 - **SMART Goal Setting**: Create Specific, Measurable, Achievable, Relevant, and Time-bound goals
-- **Milestone Management**: Break down goals into manageable milestones
-- **Task Organization**: Create tasks for each milestone with SMART criteria
+- **Milestone Management**: Break down goals into manageable milestones with SMART criteria
+- **Task Organization**: Create tasks for each milestone
 - **Value x Effort Matrix**: Prioritize tasks using the value vs effort prioritization framework
 - **Internationalization**: Support for English and Brazilian Portuguese
 - **Data Backup**: Export/import goals as JSON files

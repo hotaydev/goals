@@ -6,6 +6,7 @@
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
 	import TaskList from '$lib/components/Tasks/TaskList.svelte';
 	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
+	import CompletionBadge from '$lib/components/CompletionBadge.svelte';
 	import { modalStore } from '$lib/stores/modalStore';
 	import { m } from '$lib/paraglide/messages';
 
@@ -44,9 +45,7 @@
 							{#if completionPercentage < 100}
 								<TimeRemaining targetDate={milestone.targetDate} size="medium" />
 							{:else}
-								<p class="priority-badge priority-5">
-									{m.completed()}
-								</p>
+								<CompletionBadge targetDate={milestone.targetDate} size="medium" />
 							{/if}
 						</div>
 						<p class="milestone-description">{milestone.description}</p>

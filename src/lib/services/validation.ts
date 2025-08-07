@@ -328,7 +328,6 @@ function validateTask(task: unknown, prefix: string): string[] {
 	errors.push(...validateDateFields(task, ['createdAt', 'updatedAt'], prefix));
 
 	// Complex object validation
-	errors.push(...validateSMARTCriteria(task.smart, prefix));
 	errors.push(...validateTargetDate(task.targetDate, prefix));
 
 	// Evidences array validation

@@ -34,7 +34,6 @@ export interface Task {
 	status: TaskStatus;
 	value: ValueEffortLevel;
 	effort: ValueEffortLevel;
-	smart: SMARTCriteria;
 	targetDate: TargetDate;
 	evidences: Evidence[];
 	createdAt: string;

@@ -3,6 +3,7 @@
 	import { getGoalCompletionPercentage } from '$lib/services/percentage';
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
 	import TimeRemaining from '$lib/components/TimeRemaining.svelte';
+	import CompletionBadge from '$lib/components/CompletionBadge.svelte';
 	import { m } from '$lib/paraglide/messages';
 
 	let {
@@ -12,6 +13,8 @@
 		goal: Goal;
 		onclick?: () => void;
 	} = $props();
+
+	const completionPercentage = $derived(getGoalCompletionPercentage(goal.milestones));
 
 	// Format the target date
 	function formatTargetDate(targetDate: Goal['targetDate']): string {
@@ -67,14 +70,22 @@
 
 	<div class="goal-meta">
 		<div class="goal-dates">
-			<TimeRemaining
-				targetDate={goal.targetDate}
-				size="medium"
-				extraText={m.expected_by({ date: formatTargetDate(goal.targetDate) })}
-			/>
+			{#if completionPercentage < 100}
+				<TimeRemaining
+					targetDate={goal.targetDate}
+					size="medium"
+					extraText={m.expected_by({ date: formatTargetDate(goal.targetDate) })}
+				/>
+			{:else}
+				<CompletionBadge
+					targetDate={goal.targetDate}
+					size="medium"
+					extraText={m.expected_by({ date: formatTargetDate(goal.targetDate) })}
+				/>
+			{/if}
 		</div>
 
-		<ProgressBar percentage={getGoalCompletionPercentage(goal.milestones)} size="md" />
+		<ProgressBar percentage={completionPercentage} size="md" />
 	</div>
 </div>
 
