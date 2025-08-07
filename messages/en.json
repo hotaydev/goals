@@ -176,5 +176,8 @@
 	"no_tasks_yet": "No tasks yet. Create your first task to get started!",
 	"language": "Language",
 	"duplicate": "Duplicate",
-	"completed": "Completed"
+	"completed": "Completed",
+	"filters": "Filters",
+	"clear_all": "Clear all",
+	"priority": "Priority"
 }

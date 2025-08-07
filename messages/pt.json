@@ -175,5 +175,8 @@
 	"are_you_sure_you_want_to_delete_this_task": "Tem certeza de que deseja excluir esta tarefa? Esta ação não pode ser desfeita.",
 	"no_tasks_yet": "Nenhuma tarefa ainda. Crie sua primeira tarefa para começar!",
 	"duplicate": "Duplicar",
-	"completed": "Concluído"
+	"completed": "Concluído",
+	"filters": "Filtros",
+	"clear_all": "Limpar tudo",
+	"priority": "Prioridade"
 }

@@ -1,8 +1,10 @@
 <script lang="ts">
-	import { ArrowLeft } from '@lucide/svelte';
+	import { ArrowLeft, Filter } from '@lucide/svelte';
+	import { slide } from 'svelte/transition';
 	import { getAllTasksWithMilestones, goals } from '$lib/stores/goalsStore';
 	import ModalManager from '$lib/components/ModalManager.svelte';
 	import KanbanColumn from '$lib/components/KanbanColumn.svelte';
+	import FilterSection from '$lib/components/Tasks/FilterSection.svelte';
 	import { calculateTimeRemaining } from '$lib/services/date';
 	import type { Task, Milestone } from '$lib/models/types';
 	import { calculatePriority } from '$lib/services/priority';
@@ -10,6 +12,39 @@
 
 	// Get all tasks with their milestone information
 	const allTasksWithMilestones = getAllTasksWithMilestones();
+
+	// Filter state
+	type FilterState = {
+		selectedGoals: Set<string>;
+		selectedMilestones: Set<string>;
+		selectedPriorities: Set<number>;
+	};
+
+	let filters = $state<FilterState>({
+		selectedGoals: new Set(),
+		selectedMilestones: new Set(),
+		selectedPriorities: new Set()
+	});
+
+	// Filter visibility state - show by default if filters are active
+	let showFilters = $state(false);
+
+	// Check if any filters are active
+	const hasActiveFilters = $derived(() => {
+		return (
+			filters.selectedGoals.size > 0 ||
+			filters.selectedMilestones.size > 0 ||
+			filters.selectedPriorities.size > 0
+		);
+	});
+
+	function handleFiltersChange(newFilters: FilterState) {
+		filters = newFilters;
+	}
+
+	function toggleFilters() {
+		showFilters = !showFilters;
+	}
 
 	// Define the columns configuration
 	const columns = [
@@ -39,6 +74,35 @@
 		}
 	];
 
+	// Filter tasks based on current filters
+	const filteredTasksWithMilestones = $derived(() => {
+		return $allTasksWithMilestones.filter(({ task, milestone }) => {
+			// Find the goal for this milestone
+			const goal = $goals.find((g) => g.milestones.some((m) => m.id === milestone.id));
+			if (!goal) return false;
+
+			// Filter by selected goals
+			if (filters.selectedGoals.size > 0 && !filters.selectedGoals.has(goal.id)) {
+				return false;
+			}
+
+			// Filter by selected milestones
+			if (filters.selectedMilestones.size > 0 && !filters.selectedMilestones.has(milestone.id)) {
+				return false;
+			}
+
+			// Filter by selected priorities
+			if (filters.selectedPriorities.size > 0) {
+				const taskPriority = calculatePriority(task.value, task.effort);
+				if (!filters.selectedPriorities.has(taskPriority)) {
+					return false;
+				}
+			}
+
+			return true;
+		});
+	});
+
 	// Group tasks by status
 	const tasksByStatus = $derived(() => {
 		const grouped: Record<string, Array<{ task: Task; milestone: Milestone }>> = {
@@ -48,7 +112,7 @@
 			done: []
 		};
 
-		$allTasksWithMilestones.forEach(({ task, milestone }) => {
+		filteredTasksWithMilestones().forEach(({ task, milestone }) => {
 			// Map task status to column status
 			let columnStatus: string = task.status;
 
@@ -87,7 +151,27 @@
 			</div>
 			<p>{m.tasks_board_description()}</p>
 		</div>
+		<div class="header-actions">
+			<button
+				class="btn btn-icon filter-toggle-btn"
+				class:active={showFilters || hasActiveFilters()}
+				onclick={toggleFilters}
+				title={showFilters ? 'Hide filters' : 'Show filters'}
+			>
+				<Filter size={20} />
+				{#if hasActiveFilters()}
+					<span class="filter-indicator"></span>
+				{/if}
+			</button>
+		</div>
 	</div>
+
+	<!-- Filters -->
+	{#if showFilters}
+		<div transition:slide={{ duration: 300, axis: 'y' }}>
+			<FilterSection goals={$goals} bind:filters onFiltersChange={handleFiltersChange} />
+		</div>
+	{/if}
 
 	<!-- Kanban Board -->
 	<div class="kanban-board">
@@ -115,6 +199,35 @@
 		gap: var(--spacing-lg);
 		padding: var(--spacing-lg) 0;
 		flex-shrink: 0;
+	}
+
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-sm);
+		flex-shrink: 0;
+	}
+
+	.filter-toggle-btn {
+		position: relative;
+		transition: all var(--transition-fast);
+	}
+
+	.filter-toggle-btn.active {
+		background-color: var(--color-primary-light);
+		border-color: var(--color-primary);
+		color: var(--color-primary-dark);
+	}
+
+	.filter-indicator {
+		position: absolute;
+		top: 6px;
+		right: 6px;
+		width: 8px;
+		height: 8px;
+		background-color: var(--color-primary);
+		border-radius: 50%;
+		border: 2px solid var(--color-background);
 	}
 
 	.header-content {
@@ -166,9 +279,17 @@
 
 	@media (max-width: 768px) {
 		.page-header {
-			flex-direction: column;
-			align-items: stretch;
+			flex-direction: row;
+			align-items: flex-start;
 			padding: var(--spacing-md) 0;
+		}
+
+		.header-content {
+			flex: 1;
+		}
+
+		.header-actions {
+			margin-top: var(--spacing-xs);
 		}
 
 		.kanban-board {
