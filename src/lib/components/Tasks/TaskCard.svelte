@@ -59,13 +59,14 @@
 		background-color: var(--color-background);
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
-		padding: var(--spacing-md);
+		padding: var(--spacing-md) var(--spacing-md) var(--spacing-sm) var(--spacing-sm);
 		cursor: pointer;
 		transition: all var(--transition-fast);
 		display: flex;
 		flex-direction: column;
 		gap: var(--spacing-sm);
-		min-height: 120px;
+		width: 100%;
+		box-sizing: border-box;
 		user-select: none;
 	}
 
@@ -83,22 +84,27 @@
 
 	.card-header {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		justify-content: flex-start;
 		gap: var(--spacing-sm);
+		width: 100%;
 	}
 
 	.task-icon {
 		font-size: 1.25rem;
 		line-height: 1;
+		flex-shrink: 0;
+		margin-top: 2px;
 	}
 
 	.priority-badge {
-		padding: var(--spacing-xs) var(--spacing-sm);
+		padding: var(--spacing-xs) var(--spacing-xs);
 		border-radius: var(--radius-sm);
 		font-size: 0.625rem;
-		font-weight: 600;
+		font-weight: 500;
 		text-transform: uppercase;
+		white-space: nowrap;
+		flex-shrink: 0;
 	}
 
 	.priority-badge.priority-5 {
@@ -132,6 +138,11 @@
 		font-size: 0.875rem;
 		font-weight: 600;
 		line-height: 1.3;
+		word-wrap: break-word;
+		word-break: break-word;
+		hyphens: auto;
+		flex: 1;
+		min-width: 0;
 	}
 
 	.card-footer {
@@ -149,8 +160,10 @@
 
 	.milestone-info {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		gap: var(--spacing-xs);
+		width: 100%;
+		min-width: 0;
 	}
 
 	.milestone-icon {
@@ -162,9 +175,11 @@
 		font-size: 0.625rem;
 		color: var(--color-text-muted);
 		font-weight: 500;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		word-wrap: break-word;
+		word-break: break-word;
+		line-height: 1.3;
+		flex: 1;
+		min-width: 0;
 	}
 
 	.date-info {
@@ -192,7 +207,6 @@
 
 	@media (max-width: 768px) {
 		.task-card {
-			min-height: 100px;
 			padding: var(--spacing-sm);
 		}
 

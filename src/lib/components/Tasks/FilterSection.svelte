@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Filter, ChevronDown, X } from '@lucide/svelte';
+	import { Funnel, ChevronDown, X } from '@lucide/svelte';
 	import type { Goal } from '$lib/models/types';
 	import { m } from '$lib/paraglide/messages';
 	import { SvelteSet } from 'svelte/reactivity';
@@ -117,7 +117,7 @@
 <div class="filter-section">
 	<div class="filter-header">
 		<div class="filter-title">
-			<Filter size={18} />
+			<Funnel size={18} />
 			<span>{m.filters()}</span>
 		</div>
 		{#if filters.selectedGoals.size > 0 || filters.selectedMilestones.size > 0 || filters.selectedPriorities.size > 0}

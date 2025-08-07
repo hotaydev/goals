@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ArrowLeft, Filter } from '@lucide/svelte';
+	import { ArrowLeft, Funnel } from '@lucide/svelte';
 	import { slide } from 'svelte/transition';
 	import { getAllTasksWithMilestones, goals } from '$lib/stores/goalsStore';
 	import ModalManager from '$lib/components/ModalManager.svelte';
@@ -158,7 +158,7 @@
 				onclick={toggleFilters}
 				title={showFilters ? 'Hide filters' : 'Show filters'}
 			>
-				<Filter size={20} />
+				<Funnel size={20} />
 				{#if hasActiveFilters()}
 					<span class="filter-indicator"></span>
 				{/if}
