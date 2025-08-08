@@ -132,6 +132,41 @@
 	function getTasksForStatus(status: string) {
 		const tasksForStatus = tasksByStatus()[status] || [];
 		return tasksForStatus.sort((a, b) => {
+			// First, sort by remaining time (ascending - sooner deadlines first)
+			const timeRemainingA = calculateTimeRemaining(a.task.targetDate);
+			const timeRemainingB = calculateTimeRemaining(b.task.targetDate);
+
+			// Convert time categories to sortable numeric values
+			const getCategoryPriority = (category: string): number => {
+				switch (category) {
+					case 'overdue':
+						return 0;
+					case 'critical':
+						return 1;
+					case 'close':
+						return 2;
+					case 'soon':
+						return 3;
+					case 'plenty':
+						return 4;
+					default:
+						return 5;
+				}
+			};
+
+			const categoryPriorityA = getCategoryPriority(timeRemainingA.category);
+			const categoryPriorityB = getCategoryPriority(timeRemainingB.category);
+
+			if (categoryPriorityA !== categoryPriorityB) {
+				return categoryPriorityA - categoryPriorityB;
+			}
+
+			// Within the same category, sort by actual days (sooner first)
+			if (timeRemainingA.days !== timeRemainingB.days) {
+				return timeRemainingA.days - timeRemainingB.days;
+			}
+
+			// If same remaining time, sort by priority (higher priority first)
 			const priorityA = calculatePriority(a.task.value, a.task.effort);
 			const priorityB = calculatePriority(b.task.value, b.task.effort);
 			return priorityB - priorityA;
