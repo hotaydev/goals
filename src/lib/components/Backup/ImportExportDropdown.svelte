@@ -6,6 +6,13 @@
 	import { validateImportData, type ImportValidationResult } from '$lib/services/validation';
 	import { m } from '$lib/paraglide/messages';
 
+	interface Props {
+		highlight?: boolean;
+		hasUnsavedChanges?: boolean;
+	}
+
+	let { highlight = false, hasUnsavedChanges = false }: Props = $props();
+
 	let isOpen = $state(false);
 	let dropdownElement: HTMLDivElement;
 	let fileInput: HTMLInputElement;
@@ -130,12 +137,15 @@
 
 <div class="import-export-dropdown" bind:this={dropdownElement}>
 	<button
-		class="btn btn-icon"
+		class="btn btn-icon {highlight ? 'highlighted' : ''}"
 		onclick={toggleDropdown}
 		title={m.backup_import_or_export_goals()}
 		aria-label={m.backup_import_or_export_goals()}
 	>
 		<Archive size={20} />
+		{#if hasUnsavedChanges && !highlight}
+			<div class="unsaved-indicator"></div>
+		{/if}
 	</button>
 
 	{#if isOpen}
@@ -195,6 +205,7 @@
 		text-align: left;
 		cursor: pointer;
 		transition: background-color 0.2s ease;
+		text-wrap: nowrap;
 	}
 
 	.dropdown-item:hover {
@@ -205,6 +216,63 @@
 		.dropdown-menu {
 			right: auto;
 			left: 0;
+		}
+	}
+
+	/* Highlight effect for backup hint */
+	.btn.highlighted {
+		position: relative;
+		background: var(--color-primary) !important;
+		color: var(--color-text-inverse) !important;
+		transform: scale(1.05);
+		box-shadow:
+			0 0 0 2px rgba(37, 99, 235, 0.2),
+			0 0 12px rgba(37, 99, 235, 0.3);
+		animation: pulse 2s ease-in-out infinite;
+		transition: all 0.2s ease;
+	}
+
+	.btn.highlighted:hover {
+		background: var(--color-primary-hover) !important;
+		transform: scale(1.08);
+	}
+
+	@keyframes pulse {
+		0%,
+		100% {
+			box-shadow:
+				0 0 0 2px rgba(37, 99, 235, 0.2),
+				0 0 12px rgba(37, 99, 235, 0.3);
+		}
+		50% {
+			box-shadow:
+				0 0 0 4px rgba(37, 99, 235, 0.3),
+				0 0 20px rgba(37, 99, 235, 0.4);
+		}
+	}
+
+	/* Blue dot indicator for unsaved changes */
+	.unsaved-indicator {
+		position: absolute;
+		top: -2px;
+		right: -2px;
+		width: 10px;
+		height: 10px;
+		background: #3b82f6;
+		border-radius: 50%;
+		animation: dotPulse 2s ease-in-out infinite;
+		z-index: 1;
+	}
+
+	@keyframes dotPulse {
+		0%,
+		100% {
+			transform: scale(1);
+			opacity: 1;
+		}
+		50% {
+			transform: scale(1.2);
+			opacity: 0.8;
 		}
 	}
 </style>

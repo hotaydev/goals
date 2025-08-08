@@ -3,6 +3,14 @@ import type { Goal, Milestone, Task, Evidence } from '../models/types';
 import { browser } from '$app/environment';
 
 const STORAGE_KEY = 'goals-app-data';
+const BACKUP_TRACKING_KEY = 'backup-tracking';
+
+interface BackupTracking {
+	lastBackup: string | null;
+	hasUnsavedChanges: boolean;
+	firstChangeAfterBackup: string | null;
+	safetyReminderDismissedUntil: string | null;
+}
 
 // Helper function to load data from localStorage
 function loadFromStorage(): Goal[] {
@@ -30,10 +38,70 @@ function saveToStorage(data: Goal[]): void {
 	}
 }
 
+// Helper functions for backup tracking
+function loadBackupTracking(): BackupTracking {
+	if (!browser) {
+		return {
+			lastBackup: null,
+			hasUnsavedChanges: false,
+			firstChangeAfterBackup: null,
+			safetyReminderDismissedUntil: null
+		};
+	}
+
+	try {
+		const data = localStorage.getItem(BACKUP_TRACKING_KEY);
+		if (!data) {
+			return {
+				lastBackup: null,
+				hasUnsavedChanges: false,
+				firstChangeAfterBackup: null,
+				safetyReminderDismissedUntil: null
+			};
+		}
+		return JSON.parse(data);
+	} catch (error) {
+		console.error('Failed to load backup tracking:', error);
+		return {
+			lastBackup: null,
+			hasUnsavedChanges: false,
+			firstChangeAfterBackup: null,
+			safetyReminderDismissedUntil: null
+		};
+	}
+}
+
+function saveBackupTracking(tracking: BackupTracking): void {
+	if (!browser) return;
+
+	try {
+		localStorage.setItem(BACKUP_TRACKING_KEY, JSON.stringify(tracking));
+	} catch (error) {
+		console.error('Failed to save backup tracking:', error);
+	}
+}
+
 // Create the main store
 function createGoalsStore() {
 	const initialData = loadFromStorage();
 	const { subscribe, set, update } = writable<Goal[]>(initialData);
+
+	// Create backup tracking store
+	const backupTracking = writable<BackupTracking>(loadBackupTracking());
+
+	// Helper function to mark changes
+	function markAsChanged() {
+		backupTracking.update((tracking) => {
+			const now = new Date().toISOString();
+			const newTracking = {
+				...tracking,
+				hasUnsavedChanges: true,
+				firstChangeAfterBackup: tracking.firstChangeAfterBackup || now
+			};
+			saveBackupTracking(newTracking);
+			return newTracking;
+		});
+	}
 
 	// Helper function to update store and save to localStorage
 	function updateAndSave(updater: (data: Goal[]) => Goal[]) {
@@ -41,6 +109,7 @@ function createGoalsStore() {
 			const newData = updater(data);
 			if (browser) {
 				saveToStorage(newData);
+				markAsChanged();
 			}
 			return newData;
 		});
@@ -332,6 +401,8 @@ function createGoalsStore() {
 				currentData = data;
 			});
 			unsubscribe();
+			// Mark as backed up when exporting
+			this.markAsBackedUp();
 			return currentData!;
 		},
 
@@ -619,6 +690,66 @@ function createGoalsStore() {
 				}
 				return data;
 			});
+		},
+
+		// Backup tracking methods
+		getBackupTracking() {
+			let currentTracking: BackupTracking;
+			const unsubscribe = backupTracking.subscribe((tracking) => {
+				currentTracking = tracking;
+			});
+			unsubscribe();
+			return currentTracking!;
+		},
+
+		subscribeToBackupTracking: backupTracking.subscribe,
+
+		markAsBackedUp() {
+			backupTracking.update((tracking) => {
+				const newTracking = {
+					...tracking,
+					lastBackup: new Date().toISOString(),
+					hasUnsavedChanges: false,
+					firstChangeAfterBackup: null
+				};
+				saveBackupTracking(newTracking);
+				return newTracking;
+			});
+		},
+
+		dismissSafetyReminder() {
+			backupTracking.update((tracking) => {
+				const newTracking = {
+					...tracking,
+					safetyReminderDismissedUntil: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+				};
+				saveBackupTracking(newTracking);
+				return newTracking;
+			});
+		},
+
+		shouldShowSafetyReminder(): boolean {
+			const tracking = this.getBackupTracking();
+
+			// Don't show if no unsaved changes
+			if (!tracking.hasUnsavedChanges || !tracking.firstChangeAfterBackup) {
+				return false;
+			}
+
+			// Don't show if dismissed and still within 24h
+			if (tracking.safetyReminderDismissedUntil) {
+				const dismissedUntil = new Date(tracking.safetyReminderDismissedUntil);
+				if (new Date() < dismissedUntil) {
+					return false;
+				}
+			}
+
+			// Show if more than 24h since first change
+			const firstChange = new Date(tracking.firstChangeAfterBackup);
+			const now = new Date();
+			const hoursSinceFirstChange = (now.getTime() - firstChange.getTime()) / (1000 * 60 * 60);
+
+			return hoursSinceFirstChange >= 24;
 		}
 	};
 }

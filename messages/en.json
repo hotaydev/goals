@@ -179,5 +179,12 @@
 	"completed": "Completed",
 	"filters": "Filters",
 	"clear_all": "Clear all",
-	"priority": "Priority"
+	"priority": "Priority",
+	"backup_hint_title": "Backup your goals",
+	"backup_hint_message": "Your goals are saved locally in your browser. Use this backup option to export your data for use in other browsers or to keep a safe copy for the future.",
+	"backup_hint_dismiss": "Got it!",
+	"backup_hint_close": "Close",
+	"safety_backup_hint_title": "Don't forget to backup!",
+	"safety_backup_hint_message": "You've made changes to your goals over 24 hours ago. Consider backing up your data for safety.",
+	"safety_backup_hint_dismiss": "Maybe later"
 }

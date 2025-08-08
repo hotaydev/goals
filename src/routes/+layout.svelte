@@ -5,17 +5,49 @@
 	import ImportExportDropdown from '$lib/components/Backup/ImportExportDropdown.svelte';
 	import CommandPalette from '$lib/components/CommandPalette.svelte';
 	import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
+	import BackupHint from '$lib/components/BackupHint.svelte';
+	import SafetyBackupHint from '$lib/components/SafetyBackupHint.svelte';
+	import { goals, goalsStore } from '$lib/stores/goalsStore';
 	import { locales, localizeHref } from '$lib/paraglide/runtime';
 	import { page } from '$app/state';
 	import { m } from '$lib/paraglide/messages';
+	import { onMount } from 'svelte';
 
 	let { children } = $props();
 	let commandPaletteRef: CommandPalette;
+	// eslint-disable-next-line svelte/prefer-writable-derived
+	let showBackupHint = $state(false);
+	let hasUnsavedChanges = $state(false);
+	let showSafetyReminder = $state(false);
+
+	// Show backup hint when there are no goals
+	$effect(() => {
+		showBackupHint = $goals.length === 0;
+	});
+
+	// Monitor backup tracking state
+	onMount(() => {
+		const unsubscribe = goalsStore.subscribeToBackupTracking((tracking) => {
+			hasUnsavedChanges = tracking.hasUnsavedChanges;
+			showSafetyReminder = goalsStore.shouldShowSafetyReminder();
+		});
+
+		return unsubscribe;
+	});
 
 	function openCommandPalette() {
 		if (commandPaletteRef && commandPaletteRef.toggleCommandPalette) {
 			commandPaletteRef.toggleCommandPalette();
 		}
+	}
+
+	function hideBackupHint() {
+		showBackupHint = false;
+	}
+
+	function hideSafetyReminder() {
+		goalsStore.dismissSafetyReminder();
+		showSafetyReminder = false;
 	}
 </script>
 
@@ -42,7 +74,11 @@
 					<CheckSquare size={20} />
 				</a>
 				<LanguageSwitcher />
-				<ImportExportDropdown />
+				<div class="backup-container">
+					<ImportExportDropdown highlight={showBackupHint} {hasUnsavedChanges} />
+					<BackupHint show={showBackupHint} onDismiss={hideBackupHint} />
+					<SafetyBackupHint show={showSafetyReminder} onDismiss={hideSafetyReminder} />
+				</div>
 				<ThemeSwitcher />
 			</div>
 		</div>
@@ -65,3 +101,10 @@
 
 <!-- Command Palette -->
 <CommandPalette bind:this={commandPaletteRef} />
+
+<style>
+	.backup-container {
+		position: relative;
+		display: inline-block;
+	}
+</style>

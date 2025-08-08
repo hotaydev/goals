@@ -174,9 +174,17 @@
 	"task_details": "Detalhes da tarefa",
 	"are_you_sure_you_want_to_delete_this_task": "Tem certeza de que deseja excluir esta tarefa? Esta ação não pode ser desfeita.",
 	"no_tasks_yet": "Nenhuma tarefa ainda. Crie sua primeira tarefa para começar!",
+	"language": "Idioma",
 	"duplicate": "Duplicar",
 	"completed": "Concluído",
 	"filters": "Filtros",
 	"clear_all": "Limpar tudo",
-	"priority": "Prioridade"
+	"priority": "Prioridade",
+	"backup_hint_title": "Faça backup dos seus objetivos",
+	"backup_hint_message": "Seus objetivos são salvos localmente no seu navegador. Use esta opção de backup para exportar seus dados para uso em outros navegadores ou para manter uma cópia segura para o futuro.",
+	"backup_hint_dismiss": "Entendi!",
+	"backup_hint_close": "Fechar",
+	"safety_backup_hint_title": "Não se esqueça de fazer backup!",
+	"safety_backup_hint_message": "Você fez alterações nos seus objetivos há mais de 24 horas. Considere fazer backup dos seus dados para segurança.",
+	"safety_backup_hint_dismiss": "Talvez depois"
 }
