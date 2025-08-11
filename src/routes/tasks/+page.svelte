@@ -288,7 +288,8 @@
 		display: flex;
 		gap: var(--spacing-sm);
 		overflow-x: auto;
-		padding: 0 var(--spacing-sm) var(--spacing-lg) var(--spacing-sm);
+		padding: 0;
+		padding-bottom: var(--spacing-lg);
 		flex: 1;
 		min-height: 0;
 	}
