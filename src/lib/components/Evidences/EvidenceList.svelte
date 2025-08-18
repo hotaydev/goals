@@ -10,6 +10,7 @@
 		ChevronRight
 	} from '@lucide/svelte';
 	import { m } from '$lib/paraglide/messages';
+	import { isValidUrlString } from '$lib/services/validation';
 
 	interface Props {
 		evidences: Evidence[];
@@ -21,20 +22,10 @@
 	let { evidences, onAdd, onEdit, onDelete }: Props = $props();
 	let isExpanded = $state(false);
 
-	function handleLinkClick(content: string) {
-		// Ensure the URL has a protocol
-		const url =
-			content.startsWith('http://') || content.startsWith('https://')
-				? content
-				: `https://${content}`;
-		window.open(url, '_blank', 'noopener,noreferrer');
-	}
-
 	function isValidUrl(content: string): boolean {
 		try {
-			// Check if it's a valid URL format
-			const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
-			return urlRegex.test(content);
+			// Use shared URL validation function
+			return isValidUrlString(content);
 		} catch {
 			return false;
 		}
@@ -80,13 +71,14 @@
 						<div class="evidence-content">
 							<div class="evidence-title">
 								{#if evidence.type === 'link' && isValidUrl(evidence.content)}
-									<button
+									<a
 										class="link-button"
-										onclick={() => handleLinkClick(evidence.content)}
+										href={evidence.content}
 										title={m.open_link_in_new_tab()}
+										target="_blank"
 									>
 										{evidence.title}
-									</button>
+									</a>
 								{:else}
 									{evidence.title} • <span class="evidence-text">{evidence.content}</span>
 								{/if}

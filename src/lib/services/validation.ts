@@ -11,7 +11,8 @@ export interface ImportValidationResult extends ValidationResult {
 }
 
 // Shared constants
-const URL_REGEX = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+const URL_REGEX =
+	/^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
 const TASK_STATUSES: TaskStatus[] = ['planned', 'in_progress', 'done'];
 const VALUE_EFFORT_LEVELS: ValueEffortLevel[] = ['high', 'low'];
 const EVIDENCE_TYPES = ['link', 'note'] as const;
@@ -66,6 +67,13 @@ function isValidUrl(value: string, fieldName: string): string | null {
 		return m.validation_error_must_be_valid_url({ fieldName });
 	}
 	return null;
+}
+
+/**
+ * Exported function to validate URLs for use in components
+ */
+export function isValidUrlString(url: string): boolean {
+	return URL_REGEX.test(url);
 }
 
 /**

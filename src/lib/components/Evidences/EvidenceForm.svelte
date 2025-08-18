@@ -2,6 +2,7 @@
 	import type { Evidence } from '$lib/models/types';
 	import { ExternalLink, FileText, Save, X } from '@lucide/svelte';
 	import { m } from '$lib/paraglide/messages';
+	import { isValidUrlString } from '$lib/services/validation';
 
 	interface Props {
 		evidence?: Evidence | null; // null for create, Evidence for edit
@@ -32,9 +33,8 @@
 		}
 
 		if (type === 'link' && content.trim()) {
-			// Basic URL validation
-			const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
-			if (!urlRegex.test(content.trim())) {
+			// URL validation using shared validation function
+			if (!isValidUrlString(content.trim())) {
 				newErrors.content = m.validation_invalid_url();
 			}
 		}
@@ -67,8 +67,7 @@
 	function handleContentChange() {
 		const trimmedContent = content.trim();
 		if (trimmedContent && type === 'note') {
-			const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
-			if (urlRegex.test(trimmedContent)) {
+			if (isValidUrlString(trimmedContent)) {
 				type = 'link';
 			}
 		}
