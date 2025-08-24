@@ -335,6 +335,12 @@ function validateTask(task: unknown, prefix: string): string[] {
 	// Date fields
 	errors.push(...validateDateFields(task, ['createdAt', 'updatedAt'], prefix));
 
+	// Optional completedDate field
+	if (task.completedDate !== undefined) {
+		const completedDateError = isValidDateString(task.completedDate, `${prefix}.completedDate`);
+		if (completedDateError) errors.push(completedDateError);
+	}
+
 	// Complex object validation
 	errors.push(...validateTargetDate(task.targetDate, prefix));
 

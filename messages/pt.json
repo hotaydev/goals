@@ -186,5 +186,6 @@
 	"backup_hint_close": "Fechar",
 	"safety_backup_hint_title": "Não se esqueça de fazer backup!",
 	"safety_backup_hint_message": "Você fez alterações nos seus objetivos há mais de 24 horas. Considere fazer backup dos seus dados para segurança.",
-	"safety_backup_hint_dismiss": "Talvez depois"
+	"safety_backup_hint_dismiss": "Talvez depois",
+	"completed_on": "Concluído em {date}"
 }

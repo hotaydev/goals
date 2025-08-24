@@ -186,5 +186,6 @@
 	"backup_hint_close": "Close",
 	"safety_backup_hint_title": "Don't forget to backup!",
 	"safety_backup_hint_message": "You've made changes to your goals over 24 hours ago. Consider backing up your data for safety.",
-	"safety_backup_hint_dismiss": "Maybe later"
+	"safety_backup_hint_dismiss": "Maybe later",
+	"completed_on": "Completed on {date}"
 }

@@ -1,20 +1,37 @@
 <script lang="ts">
 	import type { TargetDate } from '$lib/models/types';
-	import { formatTargetDate } from '$lib/services/date';
+	import { formatDate, formatTargetDate } from '$lib/services/date';
 	import { CheckCircle } from '@lucide/svelte';
 	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		targetDate?: TargetDate;
+		completedDate?: string;
 		size?: 'small' | 'medium' | 'large';
 		showIcon?: boolean;
 		extraText?: string;
 		completionText?: string;
 	}
 
-	let { targetDate, size = 'medium', showIcon = true, extraText, completionText }: Props = $props();
+	let {
+		targetDate,
+		completedDate,
+		size = 'medium',
+		showIcon = true,
+		extraText,
+		completionText
+	}: Props = $props();
 
-	const displayText = $derived(completionText || m.completed());
+	const displayText = $derived(() => {
+		if (completionText) {
+			return completionText;
+		}
+		if (completedDate) {
+			const date = new Date(completedDate);
+			return m.completed_on({ date: formatDate(date) });
+		}
+		return m.completed();
+	});
 </script>
 
 <div
@@ -27,7 +44,7 @@
 			size={size === 'small' ? 12 : size === 'medium' ? 14 : 16}
 		/>
 	{/if}
-	<span class="completion-label">{displayText}</span>
+	<span class="completion-label">{displayText()}</span>
 	{#if extraText}
 		<span class="extra-text">•</span>
 		<span class="extra-text">{extraText}</span>

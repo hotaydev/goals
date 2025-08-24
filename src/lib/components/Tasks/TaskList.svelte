@@ -80,8 +80,11 @@
 					{:else}
 						<CompletionBadge
 							targetDate={task.targetDate}
+							completedDate={task.completedDate}
 							size="small"
-							extraText={m.expected_by({ date: formatTargetDate(task.targetDate) })}
+							extraText={task.completedDate
+								? undefined
+								: m.expected_by({ date: formatTargetDate(task.targetDate) })}
 						/>
 					{/if}
 				</div>

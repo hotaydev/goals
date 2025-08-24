@@ -153,7 +153,8 @@
 			const updatedTask: Task = {
 				...task,
 				status: newStatus,
-				updatedAt: new Date().toISOString()
+				updatedAt: new Date().toISOString(),
+				completedDate: newStatus === 'done' ? new Date().toISOString() : undefined
 			};
 			goalsStore.updateTask(location.goalId, location.milestoneId, updatedTask);
 			if (newStatus === 'done') {
@@ -273,8 +274,11 @@
 						<div class="target-date-info">
 							<CompletionBadge
 								targetDate={task.targetDate}
+								completedDate={task.completedDate}
 								size="medium"
-								extraText={m.expected_by({ date: formatTargetDate(task.targetDate) })}
+								extraText={task.completedDate
+									? undefined
+									: m.expected_by({ date: formatTargetDate(task.targetDate) })}
 							/>
 						</div>
 					{/if}

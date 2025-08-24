@@ -38,6 +38,7 @@ export interface Task {
 	evidences: Evidence[];
 	createdAt: string;
 	updatedAt: string;
+	completedDate?: string;
 }
 
 export interface Milestone {
